@@ -48,7 +48,12 @@ tasks:
   db:migration:create:
     desc: Create a new SQL migration file
     cmds:
-      - goose -dir migrations create {{.CLI_ARGS}} sql
+      - goose -dir db/migrations create {{.CLI_ARGS}} sql
+
+  db:generate:
+    desc: Generate Go code from SQL queries
+    cmds:
+      - sqlc generate -f db/sqlc.yml
 ```
 
 ## Conditional: Assets download task (when ANY of `htmx`, `alpine`, or `tailwind` is enabled)
@@ -109,5 +114,6 @@ Adjust the setup task:
 
 - Task must be installed separately: https://taskfile.dev/installation/
 - The `dotenv` directive loads `.env` file automatically.
-- The `db:migration:create` task uses goose to create migration files in the `migrations/` directory. Usage: `task db:migration:create -- add_users_table`
+- The `db:migration:create` task uses goose to create migration files in the `db/migrations/` directory. Usage: `task db:migration:create -- add_users_table`
+- The `db:generate` task runs sqlc to generate Go code from SQL queries into `internal/repository/`. Usage: `task db:generate`
 - Add custom tasks as needed for the specific project.

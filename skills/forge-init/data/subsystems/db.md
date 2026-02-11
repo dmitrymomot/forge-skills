@@ -9,12 +9,11 @@
 ## Imports (main.go)
 
 ```go
-"embed"
-
 "github.com/dmitrymomot/forge/pkg/db"
+dbmigrations "{{MODULE_PATH}}/db/migrations"
 ```
 
-Note: the `"embed"` import may be shared with other subsystems (frontend static files). Deduplicate when assembling.
+Note: no `"embed"` import needed in main.go — the embed directive lives in the `db/migrations` package.
 
 ## Config Field
 
@@ -22,21 +21,10 @@ Note: the `"embed"` import may be shared with other subsystems (frontend static 
 DB db.Config `envPrefix:"DB_"`
 ```
 
-## Embed Directive
-
-Add this at package level in main.go, before the `main()` function:
-
-```go
-//go:embed migrations
-var migrationsFS embed.FS
-```
-
-Note: if frontend static embed is also present, both embed directives coexist. The `"embed"` import is only needed once.
-
 ## Init Code
 
 ```go
-pool, err := db.Open(ctx, cfg.DB, db.WithMigrations(migrationsFS))
+pool, err := db.Open(ctx, cfg.DB, db.WithMigrations(dbmigrations.FS))
 if err != nil {
     log.Fatal("failed to connect to database: ", err)
 }
@@ -56,6 +44,26 @@ None — DB is used via the pool passed to handlers and other subsystems.
 
 ```go
 forge.WithShutdownHook(db.Shutdown(pool)),
+```
+
+## Generated Files
+
+When `db` is selected, the following files are generated in addition to code in `cmd/`:
+
+| File                              | Template reference       | Purpose                                  |
+|-----------------------------------|--------------------------|------------------------------------------|
+| `db/sqlc.yml`                     | `templates/sqlc.md`      | sqlc configuration                       |
+| `db/migrations/embed.go`         | `templates/db-init.md`   | Embed package exposing migration FS      |
+| `db/migrations/00001_init.sql`   | `templates/db-init.md`   | Initial migration (updated_at trigger)   |
+| `db/queries/.gitkeep`            | —                        | Placeholder for sqlc query files         |
+| `internal/repository/.gitkeep`   | —                        | Placeholder for sqlc output              |
+
+## go.mod Tool Addition
+
+When `db` is selected, add sqlc to the tool directive:
+
+```
+github.com/sqlc-dev/sqlc/cmd/sqlc
 ```
 
 ## Env Vars (dev)

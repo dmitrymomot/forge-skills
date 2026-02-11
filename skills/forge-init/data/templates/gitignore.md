@@ -47,4 +47,4 @@ __debug_bin*
 
 - `.env` is gitignored (contains local secrets); `.env.example` is NOT gitignored.
 - The `tmp/` directory is used by Air for hot-reload builds.
-- Vendored frontend assets in `assets/static/` are committed to the repo because `//go:embed assets/static` requires them at build time. A fresh clone must compile without extra steps.
+- Vendored frontend assets in `assets/static/` are committed to the repo because `//go:embed static` (in `assets/embed.go`) requires them at build time. A fresh clone must compile without extra steps.

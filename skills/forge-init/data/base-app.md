@@ -31,6 +31,7 @@ tool (
 |-----------------|------------------------------------------------|
 | templ selected  | `github.com/a-h/templ/cmd/templ`               |
 | templ selected  | `github.com/templui/templui/cmd/templui`        |
+| db selected     | `github.com/sqlc-dev/sqlc/cmd/sqlc`             |
 
 After writing go.mod with `go mod init`, add the tool directive block, then run `go get` for each tool and `go mod tidy`.
 
@@ -92,8 +93,6 @@ import (
 	// {{SUBSYSTEM_IMPORTS}}
 )
 
-// {{EMBED_DIRECTIVES}}
-
 func main() {
 	var cfg Config
 	if err := forge.LoadConfig(&cfg); err != nil {
@@ -147,8 +146,6 @@ import (
 	// {{SUBSYSTEM_IMPORTS}}
 )
 
-// {{EMBED_DIRECTIVES}}
-
 func main() {
 	var cfg Config
 	if err := forge.LoadConfig(&cfg); err != nil {
@@ -196,7 +193,6 @@ func main() {
 | `{{APP_NAME}}`                | main.go      | App name for logger                              |
 | `{{SUBSYSTEM_IMPORTS}}`       | both files   | Import paths for enabled subsystems              |
 | `{{SUBSYSTEM_CONFIG_FIELDS}}` | config.go    | Config struct fields                             |
-| `{{EMBED_DIRECTIVES}}`       | main.go      | Package-level `//go:embed` vars                  |
 | `{{SUBSYSTEM_INIT}}`         | main.go      | Initialization code (db.Open, redis.Open, etc.)  |
 | `{{SUBSYSTEM_HEALTH_CHECKS}}`| main.go      | Health check registrations                       |
 | `{{SUBSYSTEM_APP_OPTIONS}}`  | main.go      | forge.With* options                              |
@@ -209,7 +205,9 @@ func main() {
 3. Place config fields in order: db, redis, jobs, storage, mailer, oauth
 4. Place init code in dependency order: db first (needed by jobs), redis, storage, mailer, oauth
 5. Health checks and shutdown hooks follow the same order
-6. Assemble embed directives: if ANY frontend option is enabled, add ONE `//go:embed assets/static` + `var staticFS embed.FS`; if db is enabled, add `//go:embed migrations` + `var migrationsFS embed.FS`; deduplicate `"embed"` import
+6. Assemble embed-based imports via dedicated packages (no inline `//go:embed` directives in main.go):
+   - **DB**: If `db` is enabled, add `dbmigrations "{{MODULE_PATH}}/db/migrations"` to main.go imports. Use `dbmigrations.FS` in init code. No `"embed"` import needed.
+   - **Frontend**: If ANY frontend option (`templ`, `htmx`, `alpine`, `tailwind`) is enabled, add `"{{MODULE_PATH}}/assets"` to main.go imports. Use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")` in app options. No `"embed"` import needed.
+   - These import-based embeds replace the previous `{{EMBED_DIRECTIVES}}` placeholder pattern. The `//go:embed` directives live in their respective packages (`db/migrations/embed.go` and `assets/embed.go`), not in `cmd/main.go`.
 7. Remove the `_ = ctx` line if any subsystem init code uses `ctx`
 8. Remove trailing commas and empty comment blocks if no subsystems are enabled
-9. Remove `// {{EMBED_DIRECTIVES}}` comment if no embed directives are needed

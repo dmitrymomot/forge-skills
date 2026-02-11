@@ -59,8 +59,8 @@ Read `skills/forge-init/data/directory-structure.md`.
 Create the base directories and any conditional directories for enabled subsystems in the current directory (`./`). Add `.gitkeep` files in empty directories.
 
 Key rules:
-- When `db` is selected, create `migrations/` directory
-- When ANY frontend option (templ, htmx, alpine, tailwind) is selected, create the shared `assets/{src,static/{css,js,img}}` tree — only once
+- When `db` is selected, create `db/{migrations,queries}/` tree, `internal/repository/`, and generate files per `templates/db-init.md` and `templates/sqlc.md`
+- When ANY frontend option (templ, htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the shared `assets/{src,static/{css,js,img}}` tree — only once
 - When `templ` is selected, additionally create `templates/{pages,partials,layouts}/`
 
 ---
@@ -94,7 +94,6 @@ Read `skills/forge-init/data/base-app.md` and select the correct main.go templat
 For each enabled subsystem, read its file from `skills/forge-init/data/subsystems/<key>.md` and extract:
 
 - **Imports (main.go)** section
-- **Embed Directive** section (if present)
 - **Init Code** section
 - **Health Check** section
 - **App Option** section
@@ -104,27 +103,29 @@ For each enabled subsystem, read its file from `skills/forge-init/data/subsystem
 
 When ANY of `templ`, `htmx`, `alpine`, or `tailwind` is selected, add **once** (not per option):
 
-1. Import `"embed"` (deduplicate with db if both present)
-2. Embed directive: `//go:embed assets/static` + `var staticFS embed.FS`
-3. App option: `forge.WithStaticFiles("/static/", staticFS, "assets/static")`
+1. Import `"{{MODULE_PATH}}/assets"` in main.go
+2. App option: `forge.WithStaticFiles("/static/", assets.StaticFS, "static")`
+
+No `"embed"` import or `//go:embed` directive in main.go — the embed lives in `assets/embed.go`.
 
 ### DB Embed Concern
 
 When `db` is selected, add:
 
-1. Import `"embed"` (deduplicate with frontend if both present)
-2. Embed directive: `//go:embed migrations` + `var migrationsFS embed.FS`
+1. Import `dbmigrations "{{MODULE_PATH}}/db/migrations"` in main.go
+2. Use `dbmigrations.FS` in init code: `db.WithMigrations(dbmigrations.FS)`
+
+No `"embed"` import or `//go:embed` directive in main.go — the embed lives in `db/migrations/embed.go`.
 
 ### Assembly
 
 Compose `cmd/main.go` by:
 
-1. Merging all imports (deduplicate — `"embed"` appears at most once)
-2. Adding embed directives before `main()` (migrations FS + static FS as needed)
-3. Placing init code in dependency order (db first, then redis, storage, mailer, oauth)
-4. Assembling health checks, app options, and shutdown hooks
-5. Replacing `{{APP_NAME}}` with the actual app name
-6. Removing unused placeholder comments and the `_ = ctx` line if ctx is used
+1. Merging all imports (deduplicate) — embed-based imports are regular package imports, no `"embed"` needed
+2. Placing init code in dependency order (db first, then redis, storage, mailer, oauth)
+3. Assembling health checks, app options, and shutdown hooks
+4. Replacing `{{APP_NAME}}` with the actual app name
+5. Removing unused placeholder comments and the `_ = ctx` line if ctx is used
 
 ---
 
@@ -135,7 +136,7 @@ Read each template file and generate the corresponding project file:
 - Read `skills/forge-init/data/templates/air-toml.md` → write `.air.toml`
   - If `templ` is selected, use the extended `include_ext` with `"templ"` added
 - Read `skills/forge-init/data/templates/taskfile.md` → write `Taskfile.yml` (include conditional sections based on enabled subsystems)
-  - If `db` is selected, include the `db:migration:create` task
+  - If `db` is selected, include the `db:migration:create` and `db:generate` tasks
   - If any of htmx/alpine/tailwind is selected, include the `assets:download` task with only the curl lines for selected libraries
 - Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` (assemble services from enabled subsystems' Docker Service sections)
 - Read `skills/forge-init/data/templates/gitignore.md` → write `.gitignore`
@@ -183,6 +184,12 @@ If `templ` is selected, also add to the tool block:
 ```
 	github.com/a-h/templ/cmd/templ
 	github.com/templui/templui/cmd/templui
+```
+
+If `db` is selected, also add to the tool block:
+
+```
+	github.com/sqlc-dev/sqlc/cmd/sqlc
 ```
 
 Then run:
@@ -233,6 +240,7 @@ Display a summary to the user:
     - `task dev` to start developing
     - Create handlers in `internal/handler/`
     - Create migrations with `task db:migration:create -- <name>` (if db enabled)
+    - Generate repository code with `task db:generate` after adding SQL queries (if db enabled)
     - Implement session store (if sessions enabled)
     - Implement email renderer (if mailer enabled)
     - Set up OAuth credentials (if oauth enabled)
