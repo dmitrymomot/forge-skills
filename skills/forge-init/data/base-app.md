@@ -19,6 +19,7 @@ Go 1.25+ supports a `tool (...)` directive in go.mod for dev tool dependencies. 
 ```
 tool (
 	github.com/air-verse/air
+	github.com/go-task/task/v3/cmd/task
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	github.com/pressly/goose/v3/cmd/goose
 	golang.org/x/tools/cmd/goimports
@@ -33,7 +34,7 @@ tool (
 | templ selected  | `github.com/templui/templui/cmd/templui`        |
 | db selected     | `github.com/sqlc-dev/sqlc/cmd/sqlc`             |
 
-After writing go.mod with `go mod init`, add the tool directive block, then run `go get` for each tool and `go mod tidy`.
+After writing go.mod with `go mod init`, add the tool directive block, then run `go mod tidy`.
 
 ---
 
@@ -47,6 +48,8 @@ Subsystem config types are imported from their actual packages, not from the `fo
 | redis     | `forgeredis "github.com/dmitrymomot/forge/pkg/redis"` | `forgeredis.Config` |
 | jobs      | `"github.com/dmitrymomot/forge/pkg/job"`         | `job.Config`             |
 | storage   | `"github.com/dmitrymomot/forge/pkg/storage"`     | `storage.Config`         |
+| mailer    | `"github.com/dmitrymomot/forge/pkg/mailer"` + `"github.com/dmitrymomot/forge/pkg/mailer/resend"` | `mailer.Config` + `resend.Config` |
+| oauth     | `"github.com/dmitrymomot/forge/pkg/oauth"`       | `oauth.GoogleConfig` + `oauth.GitHubConfig` |
 
 Base config types (`forge.AppConfig`, `forge.RunConfig`, `forge.CookieConfig`) remain in the `forge` package. Middleware config types (`middlewares.CORSConfig`) remain in the `middlewares` package.
 
@@ -207,7 +210,7 @@ func main() {
 5. Health checks and shutdown hooks follow the same order
 6. Assemble embed-based imports via dedicated packages (no inline `//go:embed` directives in main.go):
    - **DB**: If `db` is enabled, add `dbmigrations "{{MODULE_PATH}}/db/migrations"` to main.go imports. Use `dbmigrations.FS` in init code. No `"embed"` import needed.
-   - **Frontend**: If ANY frontend option (`templ`, `htmx`, `alpine`, `tailwind`) is enabled, add `"{{MODULE_PATH}}/assets"` to main.go imports. Use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")` in app options. No `"embed"` import needed.
+   - **Frontend**: If ANY frontend option (`htmx`, `alpine`, `tailwind`) is enabled, add `"{{MODULE_PATH}}/assets"` to main.go imports. Use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")` in app options. No `"embed"` import needed.
    - These import-based embeds replace the previous `{{EMBED_DIRECTIVES}}` placeholder pattern. The `//go:embed` directives live in their respective packages (`db/migrations/embed.go` and `assets/embed.go`), not in `cmd/main.go`.
 7. Remove the `_ = ctx` line if any subsystem init code uses `ctx`
 8. Remove trailing commas and empty comment blocks if no subsystems are enabled

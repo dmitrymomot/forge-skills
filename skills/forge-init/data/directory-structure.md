@@ -13,7 +13,6 @@
 ├── .env
 ├── .env.example
 ├── .gitignore
-├── docker-compose.yml
 ├── Taskfile.yml
 ├── go.mod
 └── go.sum
@@ -27,11 +26,11 @@
 | `db/migrations/`               | db                               | SQL migration files (goose) + embed  |
 | `db/queries/`                  | db                               | sqlc query files                     |
 | `internal/repository/`         | db                               | sqlc generated Go code               |
-| `assets/embed.go`              | templ OR htmx OR alpine OR tailwind | Embed package for static files    |
-| `assets/src/`                  | templ OR htmx OR alpine OR tailwind | Source assets (pre-build)          |
-| `assets/static/css/`           | templ OR htmx OR alpine OR tailwind | Compiled/vendored CSS              |
-| `assets/static/js/`            | templ OR htmx OR alpine OR tailwind | Compiled/vendored JS               |
-| `assets/static/img/`           | templ OR htmx OR alpine OR tailwind | Static images                      |
+| `assets/embed.go`              | htmx OR alpine OR tailwind | Embed package for static files    |
+| `assets/src/`                  | htmx OR alpine OR tailwind | Source assets (pre-build)          |
+| `assets/static/css/`           | htmx OR alpine OR tailwind | Compiled/vendored CSS              |
+| `assets/static/js/`            | htmx OR alpine OR tailwind | Compiled/vendored JS               |
+| `assets/static/img/`           | htmx OR alpine OR tailwind | Static images                      |
 | `templates/emails/`            | mailer                           | Email templates                      |
 | `templates/emails/layouts/`    | mailer                           | Email HTML layouts                   |
 
@@ -60,5 +59,6 @@ internal/repository/
 2. Create conditional directories based on selected subsystems
 3. Add a `.gitkeep` file in empty directories so they are tracked by git
 4. When `db` is selected, create the full `db/{migrations,queries}/` tree and `internal/repository/` with generated files per `templates/db-init.md` and `templates/sqlc.md`
-5. When ANY frontend option (templ, htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the full `assets/{src,static/{css,js,img}}` tree — only once, not per option
-6. When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/`, then generate `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html` from the mailer subsystem's Generated Files section. Do NOT add `.gitkeep` in these directories since they contain actual files.
+5. `docker-compose.yml` is generated only when any subsystem has Docker services (db, redis, storage) — it is NOT always created
+6. When ANY frontend option (htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the full `assets/{src,static/{css,js,img}}` tree — only once, not per option
+7. When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/`, then generate `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html` from the mailer subsystem's Generated Files section. Do NOT add `.gitkeep` in these directories since they contain actual files.
