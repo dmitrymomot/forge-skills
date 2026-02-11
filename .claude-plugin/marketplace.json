@@ -10,9 +10,9 @@
   },
   "plugins": [
     {
-      "name": "forge-init",
-      "source": "./skills/forge-init",
-      "description": "Initialize a new Forge framework application with interactive scaffolding",
+      "name": "forge-skills",
+      "source": "./",
+      "description": "Claude Code skills for building applications with the Forge Go micro-SaaS framework",
       "version": "0.1.0",
       "author": {
         "name": "Dmitry Momot"
