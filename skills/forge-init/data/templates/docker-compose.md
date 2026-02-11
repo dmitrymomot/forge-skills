@@ -17,7 +17,7 @@ volumes:
 1. Start with the base structure.
 2. For each enabled subsystem that has a Docker Service section, insert its service definition under `services:`.
 3. For each enabled subsystem that has a Docker Volume section, insert its volume definition under `volumes:`.
-4. If no subsystems have Docker services, still generate the file with only comments as placeholders.
+4. If no subsystems have Docker services, do NOT generate `docker-compose.yml`.
 5. Replace `{{APP_NAME}}` in service configs with the actual app name (used in DB names, bucket names, etc.).
 
 ## Service Sources
@@ -85,10 +85,3 @@ volumes:
   minio_data:
 ```
 
-## Example Output (no Docker services)
-
-```yaml
-# No services required for the selected subsystems.
-# Add your own services here as needed.
-services: {}
-```

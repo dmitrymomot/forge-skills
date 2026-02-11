@@ -24,6 +24,9 @@ COOKIE_PATH=/
 COOKIE_SAME_SITE=lax
 COOKIE_SECURE=false
 COOKIE_HTTP_ONLY=true
+
+# CORS
+CORS_ALLOWED_ORIGINS=http://localhost:8080
 ```
 
 ### .env.example (placeholder values)
@@ -44,6 +47,9 @@ COOKIE_PATH=/
 COOKIE_SAME_SITE=lax
 COOKIE_SECURE=true
 COOKIE_HTTP_ONLY=true
+
+# CORS
+CORS_ALLOWED_ORIGINS=https://yourdomain.com
 ```
 
 ---

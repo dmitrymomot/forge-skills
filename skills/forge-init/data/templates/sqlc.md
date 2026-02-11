@@ -60,4 +60,4 @@ sql:
 
 - **No UUID overrides** — Forge uses `pkg/id` to generate string-based IDs in Go. Columns use `VARCHAR` or `TEXT` types, which map to `string` natively.
 - Paths are relative to `db/sqlc.yml`: `schema: "migrations"` resolves to `db/migrations/`, `queries: "queries"` resolves to `db/queries/`, and `out: "../internal/repository"` resolves to `internal/repository/`.
-- Run with: `sqlc generate -f db/sqlc.yml`
+- Run with: `go tool sqlc generate -f db/sqlc.yml`
