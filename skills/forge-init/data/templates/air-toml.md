@@ -57,9 +57,15 @@ When `templ` is selected, add `"templ"` to the `include_ext` list so Air watches
   include_ext = ["go", "tpl", "tmpl", "html", "templ"]
 ```
 
+Also change the build command to run templ generate before building:
+
+```toml
+  cmd = "go tool templ generate && go build -o ./tmp/main ./cmd/..."
+```
+
 ## Notes
 
 - The `cmd` builds from `./cmd/...` matching the project structure.
 - `include_ext` includes `html` and `tmpl` for template changes.
 - When templ is enabled, `.templ` files are also watched for hot-reload.
-- Air must be installed separately: `go install github.com/air-verse/air@latest`
+- Air runs via `go tool air` from the go.mod tool directive.

@@ -13,7 +13,7 @@ tasks:
   dev:
     desc: Run the application with hot reload
     cmds:
-      - air
+      - go tool air
 
   build:
     desc: Build the application binary
@@ -34,7 +34,7 @@ tasks:
   lint:
     desc: Run linter
     cmds:
-      - golangci-lint run ./...
+      - go tool golangci-lint run ./...
 
   tidy:
     desc: Tidy go modules
@@ -48,12 +48,12 @@ tasks:
   db:migration:create:
     desc: Create a new SQL migration file
     cmds:
-      - goose -dir db/migrations create {{.CLI_ARGS}} sql
+      - go tool goose -dir db/migrations create {{.CLI_ARGS}} sql
 
   db:generate:
     desc: Generate Go code from SQL queries
     cmds:
-      - sqlc generate -f db/sqlc.yml
+      - go tool sqlc generate -f db/sqlc.yml
 ```
 
 ## Conditional: Assets download task (when ANY of `htmx`, `alpine`, or `tailwind` is enabled)
@@ -94,7 +94,16 @@ Only include the curl lines for selected libraries. If none of htmx/alpine/tailw
       - docker compose logs -f
 ```
 
-## Conditional: Setup task (always included)
+## Conditional: templ generate task (when `templ` is enabled)
+
+```yaml
+  templ:generate:
+    desc: Generate Go code from .templ files
+    cmds:
+      - go tool templ generate
+```
+
+## Conditional: Setup task
 
 ```yaml
   setup:
@@ -112,8 +121,8 @@ Adjust the setup task:
 
 ## Notes
 
-- Task must be installed separately: https://taskfile.dev/installation/
+- Run via `go tool task <taskname>` — Task is included in the go.mod tool directive.
 - The `dotenv` directive loads `.env` file automatically.
-- The `db:migration:create` task uses goose to create migration files in the `db/migrations/` directory. Usage: `task db:migration:create -- add_users_table`
-- The `db:generate` task runs sqlc to generate Go code from SQL queries into `internal/repository/`. Usage: `task db:generate`
+- The `db:migration:create` task uses goose to create migration files in the `db/migrations/` directory. Usage: `go tool task db:migration:create -- add_users_table`
+- The `db:generate` task runs sqlc to generate Go code from SQL queries into `internal/repository/`. Usage: `go tool task db:generate`
 - Add custom tasks as needed for the specific project.
