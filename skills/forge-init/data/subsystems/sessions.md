@@ -39,25 +39,11 @@ None.
 
 ## Env Vars (dev)
 
-```env
-COOKIE_SECRET=dev-secret-change-me-must-be-at-least-32-bytes!!
-COOKIE_DOMAIN=localhost
-COOKIE_PATH=/
-COOKIE_SAME_SITE=lax
-COOKIE_SECURE=false
-COOKIE_HTTP_ONLY=true
-```
+Included in base config — see `templates/env-vars.md` base Cookie section.
 
 ## Env Vars (example)
 
-```env
-COOKIE_SECRET=<generate-a-32+-byte-secret>
-COOKIE_DOMAIN=yourdomain.com
-COOKIE_PATH=/
-COOKIE_SAME_SITE=lax
-COOKIE_SECURE=true
-COOKIE_HTTP_ONLY=true
-```
+Included in base config — see `templates/env-vars.md` base Cookie section.
 
 ## Docker Service
 

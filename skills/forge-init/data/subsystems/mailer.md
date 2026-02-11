@@ -219,7 +219,7 @@ If you didn't create an account with {{APP_NAME}}, please ignore this email.
             {{.Content}}
         </div>
         <div class="footer">
-            <p>&copy; 2025 {{APP_NAME}}. All rights reserved.</p>
+            <p>&copy; {{APP_NAME}}. All rights reserved.</p>
         </div>
     </div>
 </body>
