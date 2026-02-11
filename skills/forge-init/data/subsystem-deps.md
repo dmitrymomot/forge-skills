@@ -20,7 +20,7 @@
 
 1. If `jobs` is selected and `db` is NOT selected, auto-add `db` and inform the user: "Background jobs require PostgreSQL — adding database support automatically."
 2. If `oauth` is selected and `sessions` is NOT selected, suggest adding sessions: "OAuth works best with server-side sessions for state management. Add sessions? (recommended)"
-3. **Frontend shared assets rule:** If ANY of `templ`, `htmx`, `alpine`, or `tailwind` is selected, the project gets a shared `assets/` directory tree with an `assets/embed.go` package (see `templates/assets-embed.md`). Import the package in main.go as `"{{MODULE_PATH}}/assets"` and use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")`. These are NOT duplicated per frontend option — they are added once.
+3. **Frontend shared assets rule:** If ANY of `htmx`, `alpine`, or `tailwind` is selected, the project gets a shared `assets/` directory tree with an `assets/embed.go` package (see `templates/assets-embed.md`). Import the package in main.go as `"{{MODULE_PATH}}/assets"` and use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")`. These are NOT duplicated per frontend option — they are added once.
 4. After resolution, display the final list and ask for confirmation before proceeding.
 
 ## Env Prefix Map

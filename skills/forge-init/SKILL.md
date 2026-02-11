@@ -47,7 +47,7 @@ After Q3, read `skills/forge-init/data/subsystem-deps.md` and resolve dependenci
 
 - Jobs without DB → auto-add DB, inform user
 - OAuth without Sessions → recommend adding Sessions
-- ANY of templ/htmx/alpine/tailwind selected → note that shared `assets/` directory and static embed will be created once
+- ANY of htmx/alpine/tailwind selected → note that shared `assets/` directory and static embed will be created once
 - Show final resolved subsystem list and get confirmation
 
 ---
@@ -60,7 +60,7 @@ Create the base directories and any conditional directories for enabled subsyste
 
 Key rules:
 - When `db` is selected, create `db/{migrations,queries}/` tree, `internal/repository/`, and generate files per `templates/db-init.md` and `templates/sqlc.md`
-- When ANY frontend option (templ, htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the shared `assets/{src,static/{css,js,img}}` tree — only once
+- When ANY frontend option (htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the shared `assets/{src,static/{css,js,img}}` tree — only once
 - When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/` directories (email template files are generated in Phase 4)
 
 ---
@@ -82,6 +82,8 @@ Compose `cmd/config.go` by inserting subsystem imports and config fields into th
 | redis     | `forgeredis.Config`  | `forgeredis "github.com/dmitrymomot/forge/pkg/redis"` |
 | jobs      | `job.Config`         | `"github.com/dmitrymomot/forge/pkg/job"`            |
 | storage   | `storage.Config`     | `"github.com/dmitrymomot/forge/pkg/storage"`        |
+| mailer    | `mailer.Config` + `resend.Config` | `"github.com/dmitrymomot/forge/pkg/mailer"` + `"github.com/dmitrymomot/forge/pkg/mailer/resend"` |
+| oauth     | `oauth.GoogleConfig` + `oauth.GitHubConfig` | `"github.com/dmitrymomot/forge/pkg/oauth"` |
 
 Remove placeholder comments from the final output.
 
@@ -101,7 +103,7 @@ For each enabled subsystem, read its file from `skills/forge-init/data/subsystem
 
 ### Shared Frontend Concern
 
-When ANY of `templ`, `htmx`, `alpine`, or `tailwind` is selected, add **once** (not per option):
+When ANY of `htmx`, `alpine`, or `tailwind` is selected, add **once** (not per option):
 
 1. Import `"{{MODULE_PATH}}/assets"` in main.go
 2. App option: `forge.WithStaticFiles("/static/", assets.StaticFS, "static")`
@@ -138,9 +140,11 @@ Read each template file and generate the corresponding project file:
 - Read `skills/forge-init/data/templates/taskfile.md` → write `Taskfile.yml` (include conditional sections based on enabled subsystems)
   - If `db` is selected, include the `db:migration:create` and `db:generate` tasks
   - If any of htmx/alpine/tailwind is selected, include the `assets:download` task with only the curl lines for selected libraries
-- Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` (assemble services from enabled subsystems' Docker Service sections)
+- Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` **only if** any enabled subsystem has Docker services (db, redis, storage). If no Docker services exist, skip this file entirely.
 - Read `skills/forge-init/data/templates/gitignore.md` → write `.gitignore`
 - If `mailer` is selected, read the Generated Files section from `skills/forge-init/data/subsystems/mailer.md` and create `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html`. Replace `{{APP_NAME}}` with the actual app name. Preserve Go template syntax (`{{.Content}}`, `{{.Metadata.Subject}}`, `{{.Name}}`, etc.) verbatim — only replace `{{APP_NAME}}` and `{{MODULE_PATH}}` scaffold placeholders.
+
+**Note:** DB init files (`db/migrations/embed.go`, `00001_init.sql`, `db/sqlc.yml`) are already generated in Phase 1 — do not regenerate them here.
 
 ---
 
@@ -174,6 +178,7 @@ The tool directive block to add:
 ```
 tool (
 	github.com/air-verse/air
+	github.com/go-task/task/v3/cmd/task
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	github.com/pressly/goose/v3/cmd/goose
 	golang.org/x/tools/cmd/goimports
@@ -203,14 +208,20 @@ go mod tidy
 If any of htmx/alpine/tailwind is selected, also run:
 
 ```bash
-task assets:download
+go tool task assets:download
 ```
 
 ---
 
 ## Phase 7: Verify Compilation
 
-Run:
+If `templ` is selected, run templ generation first:
+
+```bash
+go tool templ generate
+```
+
+Then run:
 
 ```bash
 go build -o /dev/null ./...
@@ -236,12 +247,12 @@ Display a summary to the user:
 4. **Enabled subsystems**: list with checkmarks
 5. **Generated files**: tree listing
 6. **Next steps**:
-    - `task docker:up` (if Docker services exist)
-    - `task assets:download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
-    - `task dev` to start developing
+    - `go tool task docker:up` (if Docker services exist)
+    - `go tool task assets:download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
+    - `go tool task dev` to start developing
     - Create handlers in `internal/handler/`
-    - Create migrations with `task db:migration:create -- <name>` (if db enabled)
-    - Generate repository code with `task db:generate` after adding SQL queries (if db enabled)
+    - Create migrations with `go tool task db:migration:create -- <name>` (if db enabled)
+    - Generate repository code with `go tool task db:generate` after adding SQL queries (if db enabled)
     - Implement session store (if sessions enabled)
     - Customize email templates in `templates/emails/` (if mailer enabled)
     - Set up OAuth credentials (if oauth enabled)
@@ -251,4 +262,4 @@ If `templ` is enabled, add to next steps:
 
 - **templ docs**: https://templ.guide/
 - **templui docs**: https://templui.io/docs/how-to-use
-- Run `templ generate` to compile `.templ` files to Go code
+- Run `go tool templ generate` to compile `.templ` files to Go code
