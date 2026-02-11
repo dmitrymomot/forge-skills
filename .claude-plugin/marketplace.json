@@ -21,7 +21,8 @@
       "license": "MIT",
       "category": "development",
       "tags": ["go", "forge", "scaffolding", "micro-saas"],
-      "keywords": ["forge", "golang", "init", "scaffold", "project-setup"]
+      "keywords": ["forge", "golang", "init", "scaffold", "project-setup"],
+      "skills": ["./skills/forge-init"]
     }
   ]
 }
