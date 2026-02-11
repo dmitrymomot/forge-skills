@@ -61,7 +61,7 @@ Create the base directories and any conditional directories for enabled subsyste
 Key rules:
 - When `db` is selected, create `db/{migrations,queries}/` tree, `internal/repository/`, and generate files per `templates/db-init.md` and `templates/sqlc.md`
 - When ANY frontend option (templ, htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the shared `assets/{src,static/{css,js,img}}` tree — only once
-- When `templ` is selected, additionally create `templates/{pages,partials,layouts}/`
+- When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/` directories (email template files are generated in Phase 4)
 
 ---
 
@@ -140,6 +140,7 @@ Read each template file and generate the corresponding project file:
   - If any of htmx/alpine/tailwind is selected, include the `assets:download` task with only the curl lines for selected libraries
 - Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` (assemble services from enabled subsystems' Docker Service sections)
 - Read `skills/forge-init/data/templates/gitignore.md` → write `.gitignore`
+- If `mailer` is selected, read the Generated Files section from `skills/forge-init/data/subsystems/mailer.md` and create `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html`. Replace `{{APP_NAME}}` with the actual app name. Preserve Go template syntax (`{{.Content}}`, `{{.Metadata.Subject}}`, `{{.Name}}`, etc.) verbatim — only replace `{{APP_NAME}}` and `{{MODULE_PATH}}` scaffold placeholders.
 
 ---
 
@@ -242,7 +243,7 @@ Display a summary to the user:
     - Create migrations with `task db:migration:create -- <name>` (if db enabled)
     - Generate repository code with `task db:generate` after adding SQL queries (if db enabled)
     - Implement session store (if sessions enabled)
-    - Implement email renderer (if mailer enabled)
+    - Customize email templates in `templates/emails/` (if mailer enabled)
     - Set up OAuth credentials (if oauth enabled)
     - Health checks available at `/_live` and `/_ready`
 
