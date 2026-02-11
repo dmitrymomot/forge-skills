@@ -1,0 +1,27 @@
+{
+  "name": "forge-skills",
+  "owner": {
+    "name": "Dmitry Momot",
+    "email": "mail@dmitrymomot.com"
+  },
+  "metadata": {
+    "description": "Claude Code skills for building applications with the Forge Go micro-SaaS framework",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "forge-init",
+      "source": "./skills/forge-init",
+      "description": "Initialize a new Forge framework application with interactive scaffolding",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dmitry Momot"
+      },
+      "repository": "https://github.com/dmitrymomot/forge-skills",
+      "license": "MIT",
+      "category": "development",
+      "tags": ["go", "forge", "scaffolding", "micro-saas"],
+      "keywords": ["forge", "golang", "init", "scaffold", "project-setup"]
+    }
+  ]
+}
