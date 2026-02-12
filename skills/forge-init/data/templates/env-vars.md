@@ -109,3 +109,21 @@ REDIS_URL=redis://localhost:6379/0
 3. `.env` is gitignored — safe for local secrets.
 4. `.env.example` is committed — shows required vars with safe placeholder values.
 5. Both files have identical keys, only values differ.
+
+---
+
+## Multi-Domain Override
+
+When the user selected **multi-domain mode** (`forge.Run()`), substitute the following values in `.env` only:
+
+| Variable | Single-domain value | Multi-domain value |
+|---|---|---|
+| `APP_BASE_DOMAIN` | `localhost` | `lvh.me` |
+| `COOKIE_DOMAIN` | `localhost` | `lvh.me` |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:8080` | `http://lvh.me:8080` |
+
+**Why:** `lvh.me` resolves to `127.0.0.1` and supports wildcard subdomains (`*.lvh.me`), which browsers require for multi-domain/multi-tenant development. Plain `localhost` does not support subdomains.
+
+**Do NOT change** Docker service URLs (`DB_URL`, `REDIS_URL`, `STORAGE_ENDPOINT`, `SMTP_HOST`, etc.) — those are TCP connections, not browser requests, and must remain `localhost`.
+
+`.env.example` is unaffected — it already uses `yourdomain.com` placeholders.

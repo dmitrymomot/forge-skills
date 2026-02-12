@@ -164,6 +164,8 @@ Generate two files:
 
 Replace `{{APP_NAME}}` with the actual app name in all values.
 
+**Multi-domain override:** If the user chose multi-domain mode (`forge.Run()`), apply the `lvh.me` substitutions described in the "Multi-Domain Override" section of `env-vars.md`. This affects `APP_BASE_DOMAIN`, `COOKIE_DOMAIN`, `CORS_ALLOWED_ORIGINS`, and OAuth redirect URLs in `.env` only. Docker service URLs stay as `localhost`.
+
 ---
 
 ## Phase 6: Initialize Go Module

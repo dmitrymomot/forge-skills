@@ -77,4 +77,10 @@ None.
 - Sessions are strongly recommended for OAuth state management (CSRF protection).
 - If sessions are not enabled, the skill should suggest adding them.
 - Redirect URLs use `localhost:8080` for development; update for production.
+- **Multi-domain mode:** When the app uses `forge.Run()` (multi-domain), dev redirect URLs must use `lvh.me:8080` instead of `localhost:8080`:
+  ```
+  GOOGLE_OAUTH_REDIRECT_URL=http://lvh.me:8080/auth/google/callback
+  GITHUB_OAUTH_REDIRECT_URL=http://lvh.me:8080/auth/github/callback
+  ```
+  This applies to `.env` only. `.env.example` keeps `localhost:8080` as-is.
 - Both Google and GitHub providers are included by default. Remove unused ones.
