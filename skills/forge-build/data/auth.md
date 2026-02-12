@@ -14,8 +14,8 @@ Loaded when the feature involves login, registration, sessions, OAuth, or RBAC.
 | `c.UserID()` | Get authenticated user ID |
 | `c.Role()` | Get user's RBAC role |
 | `c.Can(permission)` | Check if user has permission |
-| `c.SessionGet(key)` | Get typed session value |
-| `c.SessionSet(key, value)` | Set typed session value |
+| `forge.SessionGet[T](c, key)` | Get typed session value |
+| `forge.SessionSet(c, key, value)` | Set typed session value |
 
 ---
 
@@ -29,8 +29,15 @@ type loginRequest struct {
 
 func (h *AuthHandler) login(c forge.Context) error {
     var req loginRequest
-    if err := c.Bind(&req); err != nil {
+    validationErrors, err := c.Bind(&req)
+    if err != nil {
         return err
+    }
+    if validationErrors != nil {
+        return c.JSON(http.StatusUnprocessableEntity, map[string]any{
+            "error":  "validation failed",
+            "fields": validationErrors,
+        })
     }
 
     user, err := h.repo.GetUserByEmail(c, req.Email)
@@ -42,7 +49,10 @@ func (h *AuthHandler) login(c forge.Context) error {
         return forge.ErrUnauthorized("invalid credentials")
     }
 
-    c.AuthenticateSession(user.ID)
+    if err := c.AuthenticateSession(user.ID); err != nil {
+        c.LogError("failed to authenticate session", "error", err)
+        return forge.ErrInternal("something went wrong")
+    }
 
     return c.Redirect(http.StatusSeeOther, "/dashboard")
 }
@@ -61,8 +71,15 @@ type registerRequest struct {
 
 func (h *AuthHandler) register(c forge.Context) error {
     var req registerRequest
-    if err := c.Bind(&req); err != nil {
+    validationErrors, err := c.Bind(&req)
+    if err != nil {
         return err
+    }
+    if validationErrors != nil {
+        return c.JSON(http.StatusUnprocessableEntity, map[string]any{
+            "error":  "validation failed",
+            "fields": validationErrors,
+        })
     }
 
     hash, err := hashPassword(req.Password)
@@ -82,7 +99,10 @@ func (h *AuthHandler) register(c forge.Context) error {
 
     // Auto-login after registration
     user, _ := h.repo.GetUserByEmail(c, req.Email)
-    c.AuthenticateSession(user.ID)
+    if err := c.AuthenticateSession(user.ID); err != nil {
+        c.LogError("failed to authenticate session", "error", err)
+        return forge.ErrInternal("something went wrong")
+    }
 
     return c.Redirect(http.StatusSeeOther, "/dashboard")
 }
@@ -131,10 +151,14 @@ func (h *AuthHandler) oauthCallback(c forge.Context) error {
         Provider:  profile.Provider,
     })
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to upsert oauth user", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
 
-    c.AuthenticateSession(user.ID)
+    if err := c.AuthenticateSession(user.ID); err != nil {
+        c.LogError("failed to authenticate session", "error", err)
+        return forge.ErrInternal("something went wrong")
+    }
     return c.Redirect(http.StatusSeeOther, "/dashboard")
 }
 ```
@@ -153,8 +177,8 @@ func (h *AuthHandler) Routes(r forge.Router) {
         r.POST("/logout", h.logout)
 
         // OAuth
-        r.GET("/oauth/:provider", h.oauthRedirect)
-        r.GET("/oauth/:provider/callback", h.oauthCallback)
+        r.GET("/oauth/{provider}", h.oauthRedirect)
+        r.GET("/oauth/{provider}/callback", h.oauthCallback)
     })
 }
 ```
@@ -208,12 +232,12 @@ func (h *Handler) update(c forge.Context) error {
 
 ```go
 // Store typed value in session
-c.SessionSet("onboarding_step", 3)
-c.SessionSet("selected_org", orgID)
+forge.SessionSet(c, "onboarding_step", 3)
+forge.SessionSet(c, "selected_org", orgID)
 
 // Retrieve typed value
-step := c.SessionGet[int]("onboarding_step")
-orgID := c.SessionGet[string]("selected_org")
+step := forge.SessionGet[int](c, "onboarding_step")
+orgID := forge.SessionGet[string](c, "selected_org")
 ```
 
 ---

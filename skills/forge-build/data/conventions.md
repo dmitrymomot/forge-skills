@@ -50,7 +50,7 @@ limit := forge.QueryDefault[int](c, "limit", 20)
 - `forge.ErrForbidden(msg)` → 403
 - `forge.ErrConflict(msg)` → 409
 - `forge.ErrInternal(msg)` → 500
-- `c.Error(err)` — wraps any error with appropriate status
+- `c.Error(code, message, opts...)` → custom HTTP error (prefer typed constructors above)
 - Validation errors: return 422 with field-level errors
 
 ---
@@ -127,7 +127,7 @@ Never leave binary artifacts. Always use `-o /dev/null`.
 | `c.Redirect(code, url)` | Redirect (auto-handles HTMX) |
 | `c.Render(code, component)` | Render templ component |
 | `c.RenderPartial(code, full, partial)` | Full page or HTMX partial |
-| `c.Error(err)` | Error response |
+| `c.Error(code, message, opts...)` | Custom HTTP error |
 | `c.SSE(events)` | Stream server-sent events |
 
 ## Forge Context — Data Methods
@@ -138,9 +138,9 @@ Never leave binary artifacts. Always use `-o /dev/null`.
 | `c.BindQuery(&req)` | Bind query parameters |
 | `c.BindJSON(&req)` | Bind JSON body explicitly |
 | `c.Cookie(name)` | Get cookie value |
-| `c.SetCookie(cookie)` | Set cookie |
-| `c.Flash()` | Get flash message |
-| `c.SetFlash(msg)` | Set flash message |
+| `c.SetCookie(name, value, maxAge)` | Set cookie |
+| `c.Flash(key, dest)` | Get flash value by key |
+| `c.SetFlash(key, value)` | Set flash value by key |
 | `c.Logger()` | Get structured logger |
 | `c.LogInfo(msg, args...)` | Log info |
 | `c.LogError(msg, args...)` | Log error |
@@ -157,8 +157,8 @@ Never leave binary artifacts. Always use `-o /dev/null`.
 | `c.IsAuthenticated()` | Check if logged in |
 | `c.Can(permission)` | Check RBAC permission |
 | `c.Role()` | Get user role |
-| `c.SessionGet(key)` | Get typed session value |
-| `c.SessionSet(key, value)` | Set typed session value |
+| `forge.SessionGet[T](c, key)` | Get typed session value |
+| `forge.SessionSet(c, key, value)` | Set typed session value |
 
 ## Forge Context — Storage Methods
 
