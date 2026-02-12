@@ -24,7 +24,7 @@ func (h *NotificationHandler) stream(c forge.Context) error {
                 if err != nil {
                     return
                 }
-                events <- forge.SSEJSON(notification)
+                events <- forge.SSEJSON("message", notification)
             }
         }
     }()
@@ -39,9 +39,9 @@ func (h *NotificationHandler) stream(c forge.Context) error {
 
 | Constructor | Description | Content-Type |
 |---|---|---|
-| `forge.SSEString(data)` | Plain text event | `text/plain` |
-| `forge.SSEJSON(data)` | JSON-encoded event | `application/json` |
-| `forge.SSETempl(component)` | HTML from templ component | `text/html` |
+| `forge.SSEString(event, data)` | Plain text event | `text/plain` |
+| `forge.SSEJSON(event, data)` | JSON-encoded event | `application/json` |
+| `forge.SSETempl(event, component)` | HTML from templ component | `text/html` |
 | `forge.SSEComment(text)` | Keepalive comment (`:text`) | — |
 | `forge.SSERetry(millis)` | Set reconnection interval | — |
 
@@ -67,7 +67,7 @@ func (h *Handler) stream(c forge.Context) error {
             case <-ticker.C:
                 // Poll for updates
                 count, _ := h.repo.CountUnreadNotifications(ctx, c.UserID())
-                events <- forge.SSEJSON(map[string]int64{"unread": count})
+                events <- forge.SSEJSON("notification", map[string]int64{"unread": count})
             }
         }
     }()
@@ -93,7 +93,7 @@ go func() {
         case <-ctx.Done():
             return
         case msg := <-subscription:
-            events <- forge.SSEJSON(msg)
+            events <- forge.SSEJSON("message", msg)
         }
     }
 }()
@@ -187,7 +187,7 @@ go func() {
         case <-ctx.Done():
             return
         default:
-            events <- forge.SSEJSON(map[string]int{"progress": i + 1})
+            events <- forge.SSEJSON("progress", map[string]int{"progress": i + 1})
             time.Sleep(100 * time.Millisecond)
         }
     }
@@ -208,7 +208,7 @@ go func() {
             return
         case <-ticker.C:
             stats, _ := h.repo.GetDashboardStats(ctx)
-            events <- forge.SSETempl(view.DashboardStats(stats))
+            events <- forge.SSETempl("stats", view.DashboardStats(stats))
         }
     }
 }()
