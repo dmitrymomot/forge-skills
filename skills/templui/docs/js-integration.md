@@ -163,7 +163,7 @@ templ Base(title string) {
 }
 ```
 
-**Note:** Replace `{MODULE_PATH}` and `{COMPONENTS_DIR}` with your actual values from `go.mod` and `.templui.json`. For example: `"github.com/acme/myapp/components/toast"`.
+**Note:** Replace `{MODULE_PATH}` and `{COMPONENTS_DIR}` with your actual values from `go.mod` and `.templui.json`. For example: `"github.com/acme/myapp/templates/templui/components/toast"`.
 
 ## Adding New Components
 

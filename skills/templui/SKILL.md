@@ -75,7 +75,7 @@ After generating code, always tell the user:
 
 - **ALWAYS** derive import paths from `go.mod` module path + `.templui.json` componentsDir
 - Pattern: `"{MODULE_PATH}/{COMPONENTS_DIR}/button"`
-- Example: if module is `github.com/acme/myapp` and componentsDir is `components`, then import `"github.com/acme/myapp/components/button"`
+- Example: if module is `github.com/acme/myapp` and componentsDir is `templates/templui/components`, then import `"github.com/acme/myapp/templates/templui/components/button"`
 - If `.templui.json` is missing, **ask the user** before generating any imports
 - **NEVER** use placeholder paths like `"yourapp/..."` — always resolve to real paths
 

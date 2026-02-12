@@ -4,9 +4,9 @@ templui components use CSS custom properties for theming. This guide covers sett
 
 ## Why This Is Needed
 
-- **forge-init** uses the Tailwind browser CDN (`tailwind.min.js`) — great for development, but it doesn't support custom CSS or `@theme` directives
-- **templui components** reference CSS variables like `bg-background`, `text-primary`, `border-border` — these must be defined via custom properties
-- **Production apps** need a Tailwind CLI build process that compiles `input.css` → `output.css`
+- **forge-init** creates basic CSS source files in `assets/src/` with a minimal `@theme` block (font-sans only) — compiled via the `tailwindcss` CLI
+- **templui components** reference CSS variables like `bg-background`, `text-primary`, `border-border` — these must be defined via additional CSS custom properties
+- The forge-init CSS source files need to be **extended** with templui's theme variables for component theming to work
 
 ## input.css
 
@@ -240,50 +240,30 @@ Add this script to your base layout for system-preference detection and manual t
 </script>
 ```
 
-## Production Tailwind Build
+## Extending the Forge-Init CSS
 
-To switch from the browser CDN to a proper Tailwind CLI build:
+forge-init already creates CSS source files in `assets/src/` and a `css` Taskfile task that compiles them with the `tailwindcss` standalone CLI. To add templui theme support, extend the existing CSS source file(s).
 
-### 1. Install Tailwind CLI
+### 1. Update CSS Source File
 
-```bash
-# Install globally or use npx
-npm install -D tailwindcss @tailwindcss/cli
-```
+Replace the content of `assets/src/app.css` (or the domain-specific CSS file) with the full `input.css` content shown above. This adds the templui theme variables (`--background`, `--primary`, etc.) and the `@custom-variant dark` directive on top of the existing Tailwind setup.
 
-### 2. Add Taskfile Tasks
+Keep the existing `@source` directives from forge-init but add the `@custom-variant`, `@theme inline`, `:root`, `.dark`, and `@layer base` sections from this file.
 
-Add these tasks to your `Taskfile.yml`:
+### 2. Rebuild CSS
 
-```yaml
-tailwind:
-  desc: Watch Tailwind CSS changes
-  cmds:
-    - npx @tailwindcss/cli -i ./assets/css/input.css -o ./assets/static/css/output.css --watch
-
-tailwind:build:
-  desc: Build Tailwind CSS for production
-  cmds:
-    - npx @tailwindcss/cli -i ./assets/css/input.css -o ./assets/static/css/output.css --minify
-
-dev:
-  desc: Start development with hot reload
-  deps: [tailwind]
-  cmds:
-    - task --parallel tailwind templ
-```
-
-### 3. Update Base Layout
-
-Replace the browser CDN script with the compiled CSS:
-
-```diff
-- <script src="/static/js/tailwind.min.js"></script>
-+ <link rel="stylesheet" href="/static/css/output.css"/>
-```
-
-### 4. Build for Production
+Run the existing `css` Taskfile task to recompile:
 
 ```bash
-task tailwind:build
+go tool task css
 ```
+
+### 3. Watch Mode (Optional)
+
+For development, you can run the `tailwindcss` CLI in watch mode:
+
+```bash
+tailwindcss -i assets/src/app.css -o assets/static/css/app.css --watch
+```
+
+Consider adding a `css:watch` task to your `Taskfile.yml` for convenience.
