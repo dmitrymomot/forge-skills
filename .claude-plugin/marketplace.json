@@ -22,7 +22,7 @@
       "category": "development",
       "tags": ["go", "forge", "scaffolding", "micro-saas"],
       "keywords": ["forge", "golang", "init", "scaffold", "project-setup"],
-      "skills": ["./skills/forge-init", "./skills/templui", "./skills/forge-migration"]
+      "skills": ["./skills/forge-init", "./skills/templui", "./skills/forge-build"]
     }
   ]
 }
