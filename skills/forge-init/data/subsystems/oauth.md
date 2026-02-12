@@ -22,8 +22,14 @@ GitHubOAuth oauth.GitHubConfig `envPrefix:"GITHUB_OAUTH_"`
 ## Init Code
 
 ```go
-googleOAuth := oauth.NewGoogleProvider(cfg.GoogleOAuth)
-githubOAuth := oauth.NewGitHubProvider(cfg.GitHubOAuth)
+googleOAuth, err := oauth.NewGoogleProvider(cfg.GoogleOAuth)
+if err != nil {
+    log.Fatal("failed to init google oauth: ", err)
+}
+githubOAuth, err := oauth.NewGitHubProvider(cfg.GitHubOAuth)
+if err != nil {
+    log.Fatal("failed to init github oauth: ", err)
+}
 _, _ = googleOAuth, githubOAuth // pass to handlers that need OAuth
 ```
 

@@ -21,7 +21,7 @@ Storage storage.Config `envPrefix:"STORAGE_"`
 ## Init Code
 
 ```go
-s3, err := storage.NewS3(cfg.Storage)
+s3, err := storage.New(cfg.Storage)
 if err != nil {
     log.Fatal("failed to init storage: ", err)
 }

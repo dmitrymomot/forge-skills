@@ -54,7 +54,7 @@ Subsystem config types are imported from their actual packages, not from the `fo
 | mailer    | `"github.com/dmitrymomot/forge/pkg/mailer"` + `"github.com/dmitrymomot/forge/pkg/mailer/smtp"` | `mailer.Config` + `smtp.Config` |
 | oauth     | `"github.com/dmitrymomot/forge/pkg/oauth"`       | `oauth.GoogleConfig` + `oauth.GitHubConfig` |
 
-Base config types (`forge.AppConfig`, `forge.RunConfig`, `forge.CookieConfig`) remain in the `forge` package. Middleware config types (`middlewares.CORSConfig`) remain in the `middlewares` package.
+Base config types (`forge.AppConfig`, `forge.RunConfig`) remain in the `forge` package. Cookie config uses `cookie.Config` from `"github.com/dmitrymomot/forge/pkg/cookie"`. Middleware config types (`middlewares.CORSConfig`) remain in the `middlewares` package.
 
 ---
 
@@ -66,13 +66,14 @@ package main
 import (
 	"github.com/dmitrymomot/forge"
 	"github.com/dmitrymomot/forge/middlewares"
+	"github.com/dmitrymomot/forge/pkg/cookie"
 	// {{SUBSYSTEM_IMPORTS}}
 )
 
 type Config struct {
 	App    forge.AppConfig        `envPrefix:"APP_"`
 	Run    forge.RunConfig        `envPrefix:"RUN_"`
-	Cookie forge.CookieConfig     `envPrefix:"COOKIE_"`
+	Cookie cookie.Config          `envPrefix:"COOKIE_"`
 	CORS   middlewares.CORSConfig `envPrefix:"CORS_"`
 	// {{SUBSYSTEM_CONFIG_FIELDS}}
 }
