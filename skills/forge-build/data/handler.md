@@ -31,10 +31,10 @@ func NewPostHandler(pool *pgxpool.Pool) *PostHandler {
 
 func (h *PostHandler) Routes(r forge.Router) {
     r.GET("/posts", h.list)
-    r.GET("/posts/:id", h.show)
+    r.GET("/posts/{id}", h.show)
     r.POST("/posts", h.create)
-    r.PUT("/posts/:id", h.update)
-    r.DELETE("/posts/:id", h.remove)
+    r.PUT("/posts/{id}", h.update)
+    r.DELETE("/posts/{id}", h.remove)
 }
 ```
 
@@ -81,7 +81,8 @@ func (h *PostHandler) list(c forge.Context) error {
         Offset: int32(offset),
     })
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to list posts", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
 
     return c.JSON(http.StatusOK, posts)
@@ -108,17 +109,25 @@ func (h *PostHandler) show(c forge.Context) error {
 ```go
 func (h *PostHandler) create(c forge.Context) error {
     var req createPostRequest
-    if err := c.Bind(&req); err != nil {
+    validationErrors, err := c.Bind(&req)
+    if err != nil {
         return err
     }
+    if validationErrors != nil {
+        return c.JSON(http.StatusUnprocessableEntity, map[string]any{
+            "error":  "validation failed",
+            "fields": validationErrors,
+        })
+    }
 
-    err := h.repo.CreatePost(c, repository.CreatePostParams{
+    err = h.repo.CreatePost(c, repository.CreatePostParams{
         ID:    id.New(),
         Title: req.Title,
         Body:  req.Body,
     })
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to create post", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
 
     return c.JSON(http.StatusCreated, map[string]string{"status": "created"})
@@ -132,17 +141,25 @@ func (h *PostHandler) update(c forge.Context) error {
     postID := forge.Param[string](c, "id")
 
     var req updatePostRequest
-    if err := c.Bind(&req); err != nil {
+    validationErrors, err := c.Bind(&req)
+    if err != nil {
         return err
     }
+    if validationErrors != nil {
+        return c.JSON(http.StatusUnprocessableEntity, map[string]any{
+            "error":  "validation failed",
+            "fields": validationErrors,
+        })
+    }
 
-    err := h.repo.UpdatePost(c, repository.UpdatePostParams{
+    err = h.repo.UpdatePost(c, repository.UpdatePostParams{
         ID:    postID,
         Title: req.Title,
         Body:  req.Body,
     })
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to update post", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
 
     return c.JSON(http.StatusOK, map[string]string{"status": "updated"})
@@ -157,7 +174,8 @@ func (h *PostHandler) remove(c forge.Context) error {
 
     err := h.repo.DeletePost(c, postID)
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to delete post", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
 
     return c.NoContent(http.StatusNoContent)
@@ -196,10 +214,10 @@ func (h *PostHandler) Routes(r forge.Router) {
         r.GET("/", h.list)      // GET /posts
         r.POST("/", h.create)   // POST /posts
 
-        r.Route("/:id", func(r forge.Router) {
-            r.GET("/", h.show)      // GET /posts/:id
-            r.PUT("/", h.update)    // PUT /posts/:id
-            r.DELETE("/", h.remove) // DELETE /posts/:id
+        r.Route("/{id}", func(r forge.Router) {
+            r.GET("/", h.show)      // GET /posts/{id}
+            r.PUT("/", h.update)    // PUT /posts/{id}
+            r.DELETE("/", h.remove) // DELETE /posts/{id}
         })
     })
 }
@@ -217,8 +235,8 @@ func (h *PostHandler) Routes(r forge.Router) {
         r.Route("/", func(r forge.Router) {
             r.Use(middlewares.RequireAuthenticated())
             r.POST("/", h.create)    // auth required
-            r.PUT("/:id", h.update)  // auth required
-            r.DELETE("/:id", h.remove)
+            r.PUT("/{id}", h.update)  // auth required
+            r.DELETE("/{id}", h.remove)
         })
     })
 }
@@ -249,7 +267,8 @@ For handlers that render HTML instead of JSON:
 func (h *PostHandler) list(c forge.Context) error {
     posts, err := h.repo.ListPosts(c, params)
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to list posts", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
     return c.RenderPartial(http.StatusOK,
         view.PostsPage(posts),    // full page for browser

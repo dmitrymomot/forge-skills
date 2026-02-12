@@ -385,7 +385,8 @@ func (h *PostHandler) create(c forge.Context) error {
         Body:  req.Body,
     })
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to create post", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
     return c.JSON(http.StatusCreated, post)
 }
