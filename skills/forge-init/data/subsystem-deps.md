@@ -6,7 +6,7 @@
 |--------------|--------------|----------|-----------|------------------------------------|
 | PostgreSQL   | db           | —        | —         |                                    |
 | Redis        | redis        | —        | —         |                                    |
-| Sessions     | sessions     | —        | —         | Cookie config always in base       |
+| Sessions     | sessions     | db       | db        | Cookie config always in base       |
 | Jobs         | jobs         | db       | db        | River-based, needs pgxpool         |
 | Storage      | storage      | —        | —         | S3-compatible                      |
 | templ        | templ        | —        | —         | Go templating engine               |
@@ -19,10 +19,11 @@
 ## Resolution Rules
 
 1. If `jobs` is selected and `db` is NOT selected, auto-add `db` and inform the user: "Background jobs require PostgreSQL — adding database support automatically."
-2. If `oauth` is selected and `sessions` is NOT selected, suggest adding sessions: "OAuth works best with server-side sessions for state management. Add sessions? (recommended)"
-3. **Frontend shared assets rule:** If ANY of `htmx`, `alpine`, or `tailwind` is selected, the project gets a shared `assets/` directory tree with an `assets/embed.go` package (see `templates/assets-embed.md`). Import the package in main.go as `"{{MODULE_PATH}}/assets"` and use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")`. These are NOT duplicated per frontend option — they are added once.
-4. **elements.js conditional rule:** If `tailwind` and `templ` are both selected, skip the elements.js download — templui provides its own interactive JS components via `Script()` tags.
-5. After resolution, display the final list and ask for confirmation before proceeding.
+2. If `sessions` is selected and `db` is NOT selected, auto-add `db` and inform the user: "Server-side sessions require PostgreSQL for the session store — adding database support automatically."
+3. If `oauth` is selected and `sessions` is NOT selected, suggest adding sessions: "OAuth works best with server-side sessions for state management. Add sessions? (recommended)"
+4. **Frontend shared assets rule:** If ANY of `htmx`, `alpine`, or `tailwind` is selected, the project gets a shared `assets/` directory tree with an `assets/embed.go` package (see `templates/assets-embed.md`). Import the package in main.go as `"{{MODULE_PATH}}/assets"` and use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")`. These are NOT duplicated per frontend option — they are added once.
+5. **elements.js conditional rule:** If `tailwind` and `templ` are both selected, skip the elements.js download — templui provides its own interactive JS components via `Script()` tags.
+6. After resolution, display the final list and ask for confirmation before proceeding.
 
 ## Env Prefix Map
 

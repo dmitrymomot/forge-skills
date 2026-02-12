@@ -54,10 +54,22 @@ sql:
               type: "Time"
               pointer: true
             nullable: true
+          - db_type: "pg_catalog.jsonb"
+            go_type:
+              import: "encoding/json"
+              type: "RawMessage"
+            nullable: false
+          - db_type: "pg_catalog.jsonb"
+            go_type:
+              import: "encoding/json"
+              type: "RawMessage"
+              pointer: true
+            nullable: true
 ```
 
 ## Notes
 
 - **No UUID overrides** — Forge uses `pkg/id` to generate string-based IDs in Go. Columns use `VARCHAR` or `TEXT` types, which map to `string` natively.
+- **JSONB → `json.RawMessage`** — Maps PostgreSQL `JSONB` columns to `json.RawMessage` in Go, enabling manual marshal/unmarshal for flexible data fields (e.g., session data).
 - Paths are relative to `db/sqlc.yml`: `schema: "migrations"` resolves to `db/migrations/`, `queries: "queries"` resolves to `db/queries/`, and `out: "../internal/repository"` resolves to `internal/repository/`.
 - Run with: `go tool sqlc generate -f db/sqlc.yml`

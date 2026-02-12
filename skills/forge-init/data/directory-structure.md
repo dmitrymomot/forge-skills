@@ -33,6 +33,7 @@
 | `assets/static/css/`           | htmx OR alpine OR tailwind | Compiled/vendored CSS              |
 | `assets/static/js/`            | htmx OR alpine OR tailwind | Compiled/vendored JS               |
 | `assets/static/img/`           | htmx OR alpine OR tailwind | Static images                      |
+| `internal/sessionstore/`       | sessions                         | PostgreSQL session store adapter     |
 | `templates/emails/`            | mailer                           | Email templates                      |
 | `templates/emails/layouts/`    | mailer                           | Email HTML layouts                   |
 
@@ -63,4 +64,5 @@ internal/repository/
 4. When `db` is selected, create the full `db/{migrations,queries}/` tree and `internal/repository/` with generated files per `templates/db-init.md` and `templates/sqlc.md`
 5. `docker-compose.yml` is generated only when any subsystem has Docker services (db, redis, storage) — it is NOT always created
 6. When ANY frontend option (htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the full `assets/{src,static/{css,js,img}}` tree — only once, not per option
-7. When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/`, then generate `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html` from the mailer subsystem's Generated Files section. Do NOT add `.gitkeep` in these directories since they contain actual files.
+7. When `sessions` is selected, create `internal/sessionstore/` and generate files per `templates/sessions-init.md` (migration, queries, and Go adapter)
+8. When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/`, then generate `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html` from the mailer subsystem's Generated Files section. Do NOT add `.gitkeep` in these directories since they contain actual files.

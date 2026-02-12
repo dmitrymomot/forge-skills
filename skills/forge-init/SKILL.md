@@ -46,6 +46,7 @@ Ask the user the following using `AskUserQuestion`:
 After Q3, read `skills/forge-init/data/subsystem-deps.md` and resolve dependencies:
 
 - Jobs without DB → auto-add DB, inform user
+- Sessions without DB → auto-add DB, inform user
 - OAuth without Sessions → recommend adding Sessions
 - ANY of htmx/alpine/tailwind selected → note that shared `assets/` directory and static embed will be created once
 - Show final resolved subsystem list and get confirmation
@@ -60,6 +61,7 @@ Create the base directories and any conditional directories for enabled subsyste
 
 Key rules:
 - When `db` is selected, create `db/{migrations,queries}/` tree, `internal/repository/`, and generate files per `templates/db-init.md` and `templates/sqlc.md`
+- When `sessions` is selected, create `internal/sessionstore/` and generate the migration (`db/migrations/00002_users_and_sessions.sql`), queries (`db/queries/sessions.sql`), and adapter (`internal/sessionstore/store.go`) per `templates/sessions-init.md`
 - When ANY frontend option (htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the shared `assets/{src,static/{css,js,img}}` tree — only once
 - When `tailwind` is selected, CSS source files will be created in `assets/src/` during Phase 4
 - When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/` directories (email template files are generated in Phase 4)
@@ -221,6 +223,12 @@ go get github.com/dmitrymomot/forge@latest
 go mod tidy
 ```
 
+If `db` is selected and query files exist in `db/queries/` (e.g., `sessions.sql`), also run:
+
+```bash
+go tool sqlc generate -f db/sqlc.yml
+```
+
 If any of htmx/alpine/tailwind is selected, also run:
 
 ```bash
@@ -278,7 +286,6 @@ Display a summary to the user:
     - Create handlers in `internal/handler/`
     - Create migrations with `go tool task db:migration:create -- <name>` (if db enabled)
     - Generate repository code with `go tool task db:generate` after adding SQL queries (if db enabled)
-    - Implement session store (if sessions enabled)
     - Customize email templates in `templates/emails/` (if mailer enabled)
     - Set up OAuth credentials (if oauth enabled)
     - Health checks available at `/_live` and `/_ready`
