@@ -80,8 +80,8 @@ assets:download:
     # Include the lines below based on which frontend libraries are selected:
     # htmx:
     - curl -sL https://unpkg.com/htmx.org/dist/htmx.min.js -o assets/static/js/htmx.min.js
-    - curl -sL https://unpkg.com/htmx.org/dist/ext/sse.js -o "assets/static/htmx-sse.js"
-    - curl -sL https://unpkg.com/htmx.org/dist/ext/ws.js -o "assets/static/htmx-ws.js"
+    - curl -sL https://unpkg.com/htmx.org/dist/ext/sse.js -o assets/static/js/htmx-sse.js
+    - curl -sL https://unpkg.com/htmx.org/dist/ext/ws.js -o assets/static/js/htmx-ws.js
     # alpine:
     - curl -sL https://unpkg.com/alpinejs/dist/cdn.min.js -o assets/static/js/alpine.min.js
     # tailwind:

@@ -1,6 +1,6 @@
 # Assets Embed Package
 
-Generate `assets/embed.go` when ANY frontend option (`templ`, `htmx`, `alpine`, or `tailwind`) is selected.
+Generate `assets/embed.go` when ANY frontend option (`htmx`, `alpine`, or `tailwind`) is selected.
 
 ## Template
 
