@@ -67,15 +67,15 @@ File location: `internal/task/<name>.go` (same directory as one-time tasks)
 
 ## Registration
 
-Register with `forge.WithScheduledTask` in job options:
+Register with `job.WithScheduledTask` in job options:
 
 ```go
 // In cmd/main.go
-forge.WithJobs(jobPool,
-    forge.WithScheduledTask(
+forge.WithJobs(jobPool, job.Config{},
+    job.WithScheduledTask(
         task.NewCleanupExpiredTokensTask(repo),
     ),
-    forge.WithScheduledTask(
+    job.WithScheduledTask(
         task.NewSendDigestEmailTask(mailerClient, repo),
     ),
 )

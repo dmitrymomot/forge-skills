@@ -69,15 +69,15 @@ type ProcessImageArgs struct {
 
 ## Worker Registration
 
-Register with `forge.WithTask` in the job options:
+Register with `job.WithTask` in the job options:
 
 ```go
 // In cmd/main.go
-forge.WithJobs(jobPool,
-    forge.WithTask[task.SendWelcomeEmailArgs](
+forge.WithJobs(jobPool, job.Config{},
+    job.WithTask[task.SendWelcomeEmailArgs](
         task.NewSendWelcomeEmailWorker(mailerClient, repo),
     ),
-    forge.WithTask[task.ProcessImageArgs](
+    job.WithTask[task.ProcessImageArgs](
         task.NewProcessImageWorker(storageClient),
     ),
 )
@@ -129,7 +129,7 @@ c.Enqueue("task_name", payload,
     job.WithMaxAttempts(5),                       // retry up to 5 times
     job.WithUniqueFor(10 * time.Minute),          // dedup window
     job.WithUniqueKey("user:" + userID),          // custom dedup key
-    job.WithPriority(1),                          // higher = sooner
+    job.WithPriority(1),                          // lower number = higher priority
     job.WithTags("email", "onboarding"),          // metadata tags
 )
 ```
@@ -138,7 +138,7 @@ c.Enqueue("task_name", payload,
 
 ## Retry Behavior
 
-- Default: 3 attempts with exponential backoff
+- Default: 25 attempts with exponential backoff (River default)
 - Return error from `Handle()` to trigger retry
 - Return `nil` to mark complete
 - Use `job.WithMaxAttempts(n)` to customize
