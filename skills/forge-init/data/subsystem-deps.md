@@ -29,7 +29,7 @@
 |------------|--------------------------|-------------------|
 | base       | `forge.AppConfig`        | `APP_`            |
 | base       | `forge.RunConfig`        | `RUN_`            |
-| base       | `forge.CookieConfig`     | `COOKIE_`         |
+| base       | `cookie.Config`          | `COOKIE_`         |
 | base       | `middlewares.CORSConfig` | `CORS_`           |
 | db         | `db.Config`              | `DB_`             |
 | redis      | `forgeredis.Config`      | `REDIS_`          |

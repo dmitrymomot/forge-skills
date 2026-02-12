@@ -12,7 +12,7 @@ No additional imports needed — cookie config is already in the base.
 
 ## Config Field
 
-No additional config fields — `forge.CookieConfig` is already in the base config.
+No additional config fields — `cookie.Config` is already in the base config.
 
 ## Init Code
 
