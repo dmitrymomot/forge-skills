@@ -6,32 +6,32 @@ templui components that use JavaScript ship `.min.js` files that get installed t
 
 24 of 41 templui components require JavaScript. Each exposes a `Script()` templ function that must be called in your base layout's `<head>`.
 
-| Component | Script() Required |
-|-----------|:-:|
-| avatar | Yes |
-| calendar | Yes |
-| carousel | Yes |
-| chart | Yes |
-| checkbox | Yes |
-| code | Yes |
-| collapsible | Yes |
-| copybutton | Yes |
-| datepicker | Yes |
-| dialog | Yes |
-| dropdown | Yes |
-| input | Yes |
-| inputotp | Yes |
-| label | Yes |
-| popover | Yes |
-| progress | Yes |
-| rating | Yes |
-| selectbox | Yes |
-| slider | Yes |
-| tabs | Yes |
-| tagsinput | Yes |
-| textarea | Yes |
-| timepicker | Yes |
-| toast | Yes |
+| Component   | Script() Required |
+| ----------- | :---------------: |
+| avatar      |        Yes        |
+| calendar    |        Yes        |
+| carousel    |        Yes        |
+| chart       |        Yes        |
+| checkbox    |        Yes        |
+| code        |        Yes        |
+| collapsible |        Yes        |
+| copybutton  |        Yes        |
+| datepicker  |        Yes        |
+| dialog      |        Yes        |
+| dropdown    |        Yes        |
+| input       |        Yes        |
+| inputotp    |        Yes        |
+| label       |        Yes        |
+| popover     |        Yes        |
+| progress    |        Yes        |
+| rating      |        Yes        |
+| selectbox   |        Yes        |
+| slider      |        Yes        |
+| tabs        |        Yes        |
+| tagsinput   |        Yes        |
+| textarea    |        Yes        |
+| timepicker  |        Yes        |
+| toast       |        Yes        |
 
 Components that do **NOT** need JS: accordion, alert, aspectratio, badge, breadcrumb, button, card, form, icon, pagination, radio, separator, sheet, skeleton, switch, tooltip.
 
@@ -53,14 +53,14 @@ Some components internally use other components and need their Script() tags too
 
 ### Components with Dependencies
 
-| Component | Also Needs |
-|-----------|-----------|
-| selectbox | `@popover.Script()` |
-| tagsinput | `@popover.Script()` |
-| datepicker | `@popover.Script()` |
-| dropdown | `@popover.Script()` |
-| tooltip | `@popover.Script()` (uses popover internally) |
-| sidebar | `@sheet.Script()` → `@dialog.Script()` |
+| Component  | Also Needs                                    |
+| ---------- | --------------------------------------------- |
+| selectbox  | `@popover.Script()`                           |
+| tagsinput  | `@popover.Script()`                           |
+| datepicker | `@popover.Script()`                           |
+| dropdown   | `@popover.Script()`                           |
+| tooltip    | `@popover.Script()` (uses popover internally) |
+| sidebar    | `@sheet.Script()` → `@dialog.Script()`        |
 
 ### Example: Form with selectbox
 

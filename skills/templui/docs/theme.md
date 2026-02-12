@@ -159,46 +159,46 @@ All color values use OKLCH format (`lightness chroma hue`).
 
 ### Core Variables
 
-| Variable | Purpose |
-|----------|---------|
-| `--background` | Page/app background |
-| `--foreground` | Default text color |
-| `--card` | Card surface color |
-| `--card-foreground` | Card text color |
-| `--popover` | Popover/dropdown surface |
-| `--popover-foreground` | Popover text color |
-| `--primary` | Primary buttons, links, accents |
-| `--primary-foreground` | Text on primary surfaces |
-| `--secondary` | Secondary buttons, less emphasis |
-| `--secondary-foreground` | Text on secondary surfaces |
-| `--muted` | Muted backgrounds (subtle UI) |
-| `--muted-foreground` | Muted/placeholder text |
-| `--accent` | Accent highlights (hover states, active items) |
-| `--accent-foreground` | Text on accent surfaces |
-| `--destructive` | Destructive/error actions |
-| `--destructive-foreground` | Text on destructive surfaces |
-| `--border` | Default border color |
-| `--input` | Input border color |
-| `--ring` | Focus ring color |
+| Variable                   | Purpose                                        |
+| -------------------------- | ---------------------------------------------- |
+| `--background`             | Page/app background                            |
+| `--foreground`             | Default text color                             |
+| `--card`                   | Card surface color                             |
+| `--card-foreground`        | Card text color                                |
+| `--popover`                | Popover/dropdown surface                       |
+| `--popover-foreground`     | Popover text color                             |
+| `--primary`                | Primary buttons, links, accents                |
+| `--primary-foreground`     | Text on primary surfaces                       |
+| `--secondary`              | Secondary buttons, less emphasis               |
+| `--secondary-foreground`   | Text on secondary surfaces                     |
+| `--muted`                  | Muted backgrounds (subtle UI)                  |
+| `--muted-foreground`       | Muted/placeholder text                         |
+| `--accent`                 | Accent highlights (hover states, active items) |
+| `--accent-foreground`      | Text on accent surfaces                        |
+| `--destructive`            | Destructive/error actions                      |
+| `--destructive-foreground` | Text on destructive surfaces                   |
+| `--border`                 | Default border color                           |
+| `--input`                  | Input border color                             |
+| `--ring`                   | Focus ring color                               |
 
 ### Chart Variables
 
-| Variable | Purpose |
-|----------|---------|
+| Variable                        | Purpose                   |
+| ------------------------------- | ------------------------- |
 | `--chart-1` through `--chart-5` | Chart/graph color palette |
 
 ### Sidebar Variables
 
-| Variable | Purpose |
-|----------|---------|
-| `--sidebar` | Sidebar background |
-| `--sidebar-foreground` | Sidebar text |
-| `--sidebar-primary` | Sidebar active/primary items |
+| Variable                       | Purpose                       |
+| ------------------------------ | ----------------------------- |
+| `--sidebar`                    | Sidebar background            |
+| `--sidebar-foreground`         | Sidebar text                  |
+| `--sidebar-primary`            | Sidebar active/primary items  |
 | `--sidebar-primary-foreground` | Text on sidebar primary items |
-| `--sidebar-accent` | Sidebar hover/accent state |
-| `--sidebar-accent-foreground` | Text on sidebar accent items |
-| `--sidebar-border` | Sidebar border color |
-| `--sidebar-ring` | Sidebar focus ring |
+| `--sidebar-accent`             | Sidebar hover/accent state    |
+| `--sidebar-accent-foreground`  | Text on sidebar accent items  |
+| `--sidebar-border`             | Sidebar border color          |
+| `--sidebar-ring`               | Sidebar focus ring            |
 
 ### Radius System
 
@@ -219,22 +219,22 @@ Add this script to your base layout for system-preference detection and manual t
 ```html
 <script>
   // Apply theme immediately to prevent flash
-  (function() {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
+  (function () {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.classList.add("dark");
     }
   })();
 
   function cycleTheme() {
     const html = document.documentElement;
-    const isDark = html.classList.contains('dark');
+    const isDark = html.classList.contains("dark");
     if (isDark) {
-      html.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      html.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     } else {
-      html.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      html.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     }
   }
 </script>

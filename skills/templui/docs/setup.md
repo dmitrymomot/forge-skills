@@ -37,6 +37,7 @@ This creates `.templui.json` with interactive prompts. Use these recommended val
 ```
 
 **Why these values:**
+
 - `componentsDir: "components"` — top-level, clean imports (`"myapp/components/button"`)
 - `utilsDir: "utils"` — shared utilities like `TwMerge()` live here
 - `jsDir: "assets/static/js"` — aligns with forge-init's asset directory structure
@@ -61,6 +62,7 @@ go tool templui list
 Create `assets/css/input.css` for templui theme variables. See `theme.md` for the full file content and CSS variable reference.
 
 This is needed because:
+
 - forge-init uses the Tailwind browser CDN (great for dev, no custom CSS support)
 - templui components rely on CSS custom properties (`--background`, `--primary`, etc.) for theming
 - Production apps need a proper Tailwind CLI build process
