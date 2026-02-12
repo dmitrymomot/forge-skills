@@ -10,9 +10,11 @@
 ├── internal/
 │   └── handler/       # HTTP handlers (route groups)
 ├── .air.toml
+├── .editorconfig
 ├── .env
 ├── .env.example
 ├── .gitignore
+├── CLAUDE.md
 ├── Taskfile.yml
 ├── go.mod
 └── go.sum

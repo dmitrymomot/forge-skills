@@ -142,7 +142,9 @@ Read each template file and generate the corresponding project file:
   - If any of htmx/alpine/tailwind is selected, include the `assets:download` task with only the curl lines for selected libraries
 - Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` **only if** any enabled subsystem has Docker services (db, redis, storage). If no Docker services exist, skip this file entirely.
 - Read `skills/forge-init/data/templates/gitignore.md` → write `.gitignore`
+- Read `skills/forge-init/data/templates/editorconfig.md` → write `.editorconfig`
 - If `mailer` is selected, read the Generated Files section from `skills/forge-init/data/subsystems/mailer.md` and create `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html`. Replace `{{APP_NAME}}` with the actual app name. Preserve Go template syntax (`{{.Content}}`, `{{.Metadata.Subject}}`, `{{.Name}}`, etc.) verbatim — only replace `{{APP_NAME}}` and `{{MODULE_PATH}}` scaffold placeholders.
+- Read `skills/forge-init/data/templates/claude-md.md` → write `CLAUDE.md` at the project root. Assemble dynamic sections (subsystem list, project structure, commands) based on enabled subsystems. Replace `{{APP_NAME}}` and `{{MODULE_PATH}}`.
 
 **Note:** DB init files (`db/migrations/embed.go`, `00001_init.sql`, `db/sqlc.yml`) are already generated in Phase 1 — do not regenerate them here.
 
@@ -245,7 +247,7 @@ Display a summary to the user:
 2. **Module**: `<module-path>`
 3. **Run mode**: single-domain / multi-domain
 4. **Enabled subsystems**: list with checkmarks
-5. **Generated files**: tree listing
+5. **Generated files**: tree listing (include `CLAUDE.md`)
 6. **Next steps**:
     - `go tool task docker:up` (if Docker services exist)
     - `go tool task assets:download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
