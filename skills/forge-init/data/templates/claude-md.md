@@ -84,7 +84,7 @@ Insert one bullet per enabled subsystem into the `<!-- SUBSYSTEM_BULLETS -->` pl
 | htmx | - **HTMX** — `c.IsHTMX()`, `c.RenderPartial(fullPage, partial)`. Vendored JS in `assets/static/js/` |
 | alpine | - **Alpine.js** — Lightweight JS framework. Vendored in `assets/static/js/` |
 | tailwind | - **TailwindCSS** — Utility CSS framework. Vendored browser build in `assets/static/js/` |
-| mailer | - **Email** — Resend-based mailer. Templates in `templates/emails/`, layouts in `templates/emails/layouts/`. Config: `mailer.Config` + `resend.Config` |
+| mailer | - **Email** — SMTP mailer (Mailpit in dev). Templates in `templates/emails/`, layouts in `templates/emails/layouts/`. Config: `mailer.Config` + `smtp.Config` |
 | oauth | - **OAuth** — Google and GitHub providers. Config: `oauth.GoogleConfig` + `oauth.GitHubConfig` |
 
 If no subsystems are enabled, replace the placeholder with: `No optional subsystems enabled.`

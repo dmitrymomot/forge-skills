@@ -82,7 +82,7 @@ Compose `cmd/config.go` by inserting subsystem imports and config fields into th
 | redis     | `forgeredis.Config`  | `forgeredis "github.com/dmitrymomot/forge/pkg/redis"` |
 | jobs      | `job.Config`         | `"github.com/dmitrymomot/forge/pkg/job"`            |
 | storage   | `storage.Config`     | `"github.com/dmitrymomot/forge/pkg/storage"`        |
-| mailer    | `mailer.Config` + `resend.Config` | `"github.com/dmitrymomot/forge/pkg/mailer"` + `"github.com/dmitrymomot/forge/pkg/mailer/resend"` |
+| mailer    | `mailer.Config` + `smtp.Config` | `"github.com/dmitrymomot/forge/pkg/mailer"` + `"github.com/dmitrymomot/forge/pkg/mailer/smtp"` |
 | oauth     | `oauth.GoogleConfig` + `oauth.GitHubConfig` | `"github.com/dmitrymomot/forge/pkg/oauth"` |
 
 Remove placeholder comments from the final output.
@@ -140,7 +140,8 @@ Read each template file and generate the corresponding project file:
 - Read `skills/forge-init/data/templates/taskfile.md` → write `Taskfile.yml` (include conditional sections based on enabled subsystems)
   - If `db` is selected, include the `db:migration:create` and `db:generate` tasks
   - If any of htmx/alpine/tailwind is selected, include the `assets:download` task with only the curl lines for selected libraries
-- Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` **only if** any enabled subsystem has Docker services (db, redis, storage). If no Docker services exist, skip this file entirely.
+- Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` **only if** any enabled subsystem has Docker services (db, redis, storage) or mailer is enabled. If no Docker services exist and mailer is not enabled, skip this file entirely.
+- Read `skills/forge-init/data/templates/docker-compose-test.md` → write `docker-compose.test.yml` **only if** any enabled subsystem has Docker services (db, redis, storage) or mailer is enabled. Include only the service snippets for enabled subsystems. This file uses tmpfs mounts for fast ephemeral test infrastructure.
 - Read `skills/forge-init/data/templates/gitignore.md` → write `.gitignore`
 - Read `skills/forge-init/data/templates/editorconfig.md` → write `.editorconfig`
 - If `mailer` is selected, read the Generated Files section from `skills/forge-init/data/subsystems/mailer.md` and create `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html`. Replace `{{APP_NAME}}` with the actual app name. Preserve Go template syntax (`{{.Content}}`, `{{.Metadata.Subject}}`, `{{.Name}}`, etc.) verbatim — only replace `{{APP_NAME}}` and `{{MODULE_PATH}}` scaffold placeholders.
@@ -180,10 +181,13 @@ The tool directive block to add:
 ```
 tool (
 	github.com/air-verse/air
+	github.com/dkorunic/betteralign/cmd/betteralign
 	github.com/go-task/task/v3/cmd/task
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	github.com/pressly/goose/v3/cmd/goose
+	go.uber.org/nilaway/cmd/nilaway
 	golang.org/x/tools/cmd/goimports
+	golang.org/x/tools/go/analysis/passes/modernize/cmd/modernize
 )
 ```
 
@@ -251,7 +255,9 @@ Display a summary to the user:
 6. **Next steps**:
     - `go tool task docker:up` (if Docker services exist)
     - `go tool task assets:download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
+    - `go tool task fmt` to format code and imports
     - `go tool task dev` to start developing
+    - `go tool task test:integration` to run integration tests with Docker infrastructure (if Docker services or mailer exist) — uses `docker-compose.test.yml` with tmpfs for fast ephemeral test runs
     - Create handlers in `internal/handler/`
     - Create migrations with `go tool task db:migration:create -- <name>` (if db enabled)
     - Generate repository code with `go tool task db:generate` after adding SQL queries (if db enabled)

@@ -17,7 +17,7 @@ volumes:
 1. Start with the base structure.
 2. For each enabled subsystem that has a Docker Service section, insert its service definition under `services:`.
 3. For each enabled subsystem that has a Docker Volume section, insert its volume definition under `volumes:`.
-4. If no subsystems have Docker services, do NOT generate `docker-compose.yml`.
+4. If no subsystems have Docker services (db, redis, storage) and mailer is not enabled, do NOT generate `docker-compose.yml`.
 5. Replace `{{APP_NAME}}` in service configs with the actual app name (used in DB names, bucket names, etc.).
 
 ## Service Sources
@@ -28,9 +28,11 @@ Each subsystem's Docker service and volume definitions are found in their respec
 - **redis** → Redis service + `redis_data` volume
 - **storage** → MinIO service + MinIO init (bucket creation) + `minio_data` volume
 
-Other subsystems (sessions, jobs, htmx, mailer, oauth) do not have Docker services.
+- **mailer** → Mailpit service (no volume needed)
 
-## Example Output (db + redis + storage)
+Other subsystems (sessions, jobs, htmx, oauth) do not have Docker services.
+
+## Example Output (db + redis + storage + mailer)
 
 ```yaml
 services:
@@ -91,9 +93,22 @@ services:
       mc mb --ignore-existing local/myapp-files;
       "
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 1025"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
   redis_data:
   minio_data:
 ```
+
+Note: The example above shows all services. In practice, only include the services for enabled subsystems. The `mailpit` service is included when `mailer` is enabled.
 

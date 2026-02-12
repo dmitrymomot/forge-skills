@@ -13,7 +13,7 @@
 | HTMX         | htmx         | —        | —         | JS library, vendored to assets     |
 | Alpine.js    | alpine       | —        | —         | JS library, vendored to assets     |
 | TailwindCSS  | tailwind     | —        | —         | CSS framework, vendored to assets  |
-| Mailer       | mailer       | —        | —         | Resend-based                       |
+| Mailer       | mailer       | —        | —         | SMTP-based (Mailpit in dev)        |
 | OAuth        | oauth        | —        | —         | Sessions strongly recommended      |
 
 ## Resolution Rules
@@ -36,6 +36,6 @@
 | jobs       | `job.Config`             | `JOB_`            |
 | storage    | `storage.Config`         | `STORAGE_`        |
 | mailer     | `mailer.Config`          | `MAILER_`         |
-| mailer     | `resend.Config`          | `RESEND_`         |
+| mailer     | `smtp.Config`            | `SMTP_`           |
 | oauth      | `oauth.GoogleConfig`     | `GOOGLE_OAUTH_`   |
 | oauth      | `oauth.GitHubConfig`     | `GITHUB_OAUTH_`   |

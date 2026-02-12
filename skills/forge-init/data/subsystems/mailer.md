@@ -1,10 +1,10 @@
-# Email Subsystem (Resend)
+# Email Subsystem (SMTP / Mailpit)
 
 ## Imports (config.go)
 
 ```go
 "github.com/dmitrymomot/forge/pkg/mailer"
-"github.com/dmitrymomot/forge/pkg/mailer/resend"
+"github.com/dmitrymomot/forge/pkg/mailer/smtp"
 ```
 
 ## Imports (main.go)
@@ -13,20 +13,23 @@
 "{{MODULE_PATH}}/templates/emails"
 
 "github.com/dmitrymomot/forge/pkg/mailer"
-"github.com/dmitrymomot/forge/pkg/mailer/resend"
+"github.com/dmitrymomot/forge/pkg/mailer/smtp"
 ```
 
 ## Config Fields
 
 ```go
 Mailer mailer.Config `envPrefix:"MAILER_"`
-Resend resend.Config `envPrefix:"RESEND_"`
+SMTP   smtp.Config   `envPrefix:"SMTP_"`
 ```
 
 ## Init Code
 
 ```go
-emailSender := resend.NewSender(cfg.Resend)
+// SMTP sender works with Mailpit in dev (defaults: localhost:1025, no auth).
+// For production, configure SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, SMTP_TLS.
+// Alternative: swap with resend.New(cfg) using github.com/dmitrymomot/forge/pkg/mailer/resend
+emailSender := smtp.New(cfg.SMTP)
 emailRenderer := mailer.NewRenderer(emails.FS, mailer.RendererConfig{})
 emailClient := mailer.New(emailSender, emailRenderer, cfg.Mailer)
 _ = emailClient // pass to handlers that need email
@@ -231,7 +234,8 @@ If you didn't create an account with {{APP_NAME}}, please ignore this email.
 ```env
 MAILER_FROM_NAME={{APP_NAME}}
 MAILER_FROM_EMAIL=noreply@localhost
-RESEND_API_KEY=re_test_placeholder
+SMTP_HOST=localhost
+SMTP_PORT=1025
 ```
 
 ## Env Vars (example)
@@ -239,12 +243,27 @@ RESEND_API_KEY=re_test_placeholder
 ```env
 MAILER_FROM_NAME=Your App Name
 MAILER_FROM_EMAIL=noreply@yourdomain.com
-RESEND_API_KEY=<your-resend-api-key>
+SMTP_HOST=smtp.yourdomain.com
+SMTP_PORT=587
+SMTP_USERNAME=<your-smtp-username>
+SMTP_PASSWORD=<your-smtp-password>
+SMTP_TLS=true
 ```
 
 ## Docker Service
 
-None.
+```yaml
+mailpit:
+  image: axllent/mailpit:latest
+  ports:
+    - "1025:1025"
+    - "8025:8025"
+  healthcheck:
+    test: ["CMD-SHELL", "nc -z localhost 1025"]
+    interval: 5s
+    timeout: 5s
+    retries: 5
+```
 
 ## Notes
 
@@ -253,4 +272,6 @@ None.
 - Creates `templates/emails/` and `templates/emails/layouts/` directories with working template files.
 - `templates/emails/welcome.md` is an example template — customize or replace with your own templates.
 - `templates/emails/layouts/base.html` is the HTML layout wrapping all emails — update the logo, footer, and styles to match your brand.
-- Resend is the default email provider. The `mailer.Sender` interface allows swapping providers.
+- SMTP is the default email transport. In dev, it targets Mailpit (localhost:1025) for zero-config email catching with a web UI at localhost:8025.
+- For production, configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and `SMTP_TLS`.
+- Alternative: swap `smtp.New(cfg.SMTP)` with `resend.New(cfg)` from `github.com/dmitrymomot/forge/pkg/mailer/resend` for the Resend adapter.
