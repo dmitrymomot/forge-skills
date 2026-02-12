@@ -26,15 +26,27 @@ tasks:
     cmds:
       - ./tmp/main
 
-  test:
-    desc: Run tests
+  fmt:
+    desc: Format code and imports
     cmds:
-      - go test ./...
+      - go fmt ./...
+      - go tool goimports -w -local {{MODULE_PATH}} .
+      - go tool betteralign -apply ./...
+
+  test:
+    desc: Run all tests with race detection and coverage
+    cmds:
+      - go clean -testcache && go test -race -cover ./...
 
   lint:
-    desc: Run linter
+    desc: Run code linters
     cmds:
+      - go vet ./...
+      - go build -o /dev/null ./...
       - go tool golangci-lint run ./...
+      - go tool nilaway ./...
+      - go tool betteralign ./...
+      - go tool modernize $(go list ./...)
 
   tidy:
     desc: Tidy go modules
@@ -96,6 +108,34 @@ docker:logs:
     - docker compose logs -f
 ```
 
+## Conditional: Integration test tasks (when any Docker service exists — db, redis, storage, or mailer)
+
+```yaml
+test:up:
+  desc: Start test infrastructure (docker containers)
+  cmds:
+    - docker compose -f docker-compose.test.yml up -d --wait {{SERVICES_LIST}}
+    # If storage is enabled, add this second line:
+    # - docker compose -f docker-compose.test.yml up minio-init
+
+test:down:
+  desc: Stop and remove test infrastructure
+  cmds:
+    - docker compose -f docker-compose.test.yml down -v --remove-orphans
+
+test:integration:
+  desc: Run integration tests with docker infrastructure
+  deps: [test:up]
+  cmds:
+    - defer: { task: test:down }
+    - go test -tags=integration -count=1 -race -cover $(grep -rl '//go:build integration' . --include='*_test.go' | xargs -I{} dirname {} | sort -u)
+```
+
+Assembly notes:
+- `{{SERVICES_LIST}}` is built from the enabled subsystems' Docker service names (e.g., `postgres redis minio mailpit`).
+- If storage is enabled, add the `minio-init` line to `test:up` after the main `--wait` command.
+- Only include this section when at least one Docker service exists (same condition as docker tasks).
+
 ## Conditional: templ generate task (when `templ` is enabled)
 
 ```yaml
@@ -126,6 +166,12 @@ Adjust the setup task:
 
 - Run via `go tool task <taskname>` — Task is included in the go.mod tool directive.
 - The `dotenv` directive loads `.env` file automatically.
+- The `fmt` task formats code with `go fmt`, organizes imports with `goimports` (using the module path for local import grouping), and aligns struct fields with `betteralign`.
+- The `lint` task runs a comprehensive linting pipeline matching the Forge framework's own standards: `go vet`, build check, `golangci-lint`, `nilaway`, `betteralign`, and `modernize`.
+- The `test` task runs tests with race detection and coverage reporting.
+- The `test:integration` task starts Docker test infrastructure, runs integration tests (files tagged with `//go:build integration`), and tears down infrastructure automatically via `defer`.
 - The `db:migration:create` task uses goose to create migration files in the `db/migrations/` directory. Usage: `go tool task db:migration:create -- add_users_table`
 - The `db:generate` task runs sqlc to generate Go code from SQL queries into `internal/repository/`. Usage: `go tool task db:generate`
+- `{{MODULE_PATH}}` in the `fmt` task must be replaced with the actual Go module path during generation.
+- `{{SERVICES_LIST}}` in the `test:up` task must be replaced with the space-separated list of Docker service names for the enabled subsystems (e.g., `postgres redis minio mailpit`).
 - Add custom tasks as needed for the specific project.
