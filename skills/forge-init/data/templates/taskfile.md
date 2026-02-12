@@ -45,15 +45,15 @@ tasks:
 ## Conditional: DB tasks (when `db` is enabled)
 
 ```yaml
-  db:migration:create:
-    desc: Create a new SQL migration file
-    cmds:
-      - go tool goose -dir db/migrations create {{.CLI_ARGS}} sql
+db:migration:create:
+  desc: Create a new SQL migration file
+  cmds:
+    - go tool goose -dir db/migrations create {{.CLI_ARGS}} sql
 
-  db:generate:
-    desc: Generate Go code from SQL queries
-    cmds:
-      - go tool sqlc generate -f db/sqlc.yml
+db:generate:
+  desc: Generate Go code from SQL queries
+  cmds:
+    - go tool sqlc generate -f db/sqlc.yml
 ```
 
 ## Conditional: Assets download task (when ANY of `htmx`, `alpine`, or `tailwind` is enabled)
@@ -61,16 +61,18 @@ tasks:
 Build the `assets:download` task by including only the curl commands for the selected libraries:
 
 ```yaml
-  assets:download:
-    desc: Download vendored frontend assets
-    cmds:
-      # Include the lines below based on which frontend libraries are selected:
-      # htmx:
-      - curl -sL https://unpkg.com/htmx.org/dist/htmx.min.js -o assets/static/js/htmx.min.js
-      # alpine:
-      - curl -sL https://unpkg.com/alpinejs/dist/cdn.min.js -o assets/static/js/alpine.min.js
-      # tailwind:
-      - curl -sL https://unpkg.com/@tailwindcss/browser@4/dist/cdn.min.js -o assets/static/js/tailwind.min.js
+assets:download:
+  desc: Download vendored frontend assets
+  cmds:
+    # Include the lines below based on which frontend libraries are selected:
+    # htmx:
+    - curl -sL https://unpkg.com/htmx.org/dist/htmx.min.js -o assets/static/js/htmx.min.js
+    - curl -sL https://unpkg.com/htmx.org/dist/ext/sse.js -o "assets/static/htmx-sse.js"
+    - curl -sL https://unpkg.com/htmx.org/dist/ext/ws.js -o "assets/static/htmx-ws.js"
+    # alpine:
+    - curl -sL https://unpkg.com/alpinejs/dist/cdn.min.js -o assets/static/js/alpine.min.js
+    # tailwind:
+    - curl -sL https://unpkg.com/@tailwindcss/browser@4/dist/cdn.min.js -o assets/static/js/tailwind.min.js
 ```
 
 Only include the curl lines for selected libraries. If none of htmx/alpine/tailwind are selected, omit the entire `assets:download` task.
@@ -78,44 +80,45 @@ Only include the curl lines for selected libraries. If none of htmx/alpine/tailw
 ## Conditional: Docker tasks (when any Docker service exists)
 
 ```yaml
-  docker:up:
-    desc: Start Docker services
-    cmds:
-      - docker compose up -d
+docker:up:
+  desc: Start Docker services
+  cmds:
+    - docker compose up -d
 
-  docker:down:
-    desc: Stop Docker services
-    cmds:
-      - docker compose down
+docker:down:
+  desc: Stop Docker services
+  cmds:
+    - docker compose down
 
-  docker:logs:
-    desc: Tail Docker service logs
-    cmds:
-      - docker compose logs -f
+docker:logs:
+  desc: Tail Docker service logs
+  cmds:
+    - docker compose logs -f
 ```
 
 ## Conditional: templ generate task (when `templ` is enabled)
 
 ```yaml
-  templ:generate:
-    desc: Generate Go code from .templ files
-    cmds:
-      - go tool templ generate
+templ:generate:
+  desc: Generate Go code from .templ files
+  cmds:
+    - go tool templ generate
 ```
 
 ## Conditional: Setup task
 
 ```yaml
-  setup:
-    desc: Initial project setup
-    cmds:
-      - go mod tidy
-      - task: docker:up
-      - task: assets:download
-      - echo "Project setup complete. Run 'task dev' to start developing."
+setup:
+  desc: Initial project setup
+  cmds:
+    - go mod tidy
+    - task: docker:up
+    - task: assets:download
+    - echo "Project setup complete. Run 'task dev' to start developing."
 ```
 
 Adjust the setup task:
+
 - If no Docker services exist, remove the `task: docker:up` line.
 - If no frontend download libraries are selected (htmx/alpine/tailwind), remove the `task: assets:download` line.
 
