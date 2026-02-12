@@ -26,7 +26,7 @@ Each subsystem's Docker service and volume definitions are found in their respec
 
 - **db** → PostgreSQL service + `postgres_data` volume
 - **redis** → Redis service + `redis_data` volume
-- **storage** → MinIO service + MinIO init (bucket creation) + `minio_data` volume
+- **storage** → RustFS service (`storage`) + bucket init (`storage-bucket-init` via minio/mc) + `storage_data` volume
 
 - **mailer** → Mailpit service (no volume needed)
 
@@ -64,32 +64,32 @@ services:
       timeout: 5s
       retries: 5
 
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+  storage:
+    image: rustfs/rustfs:latest
     ports:
       - "9000:9000"
       - "9001:9001"
+    environment:
+      RUSTFS_ACCESS_KEY: admin
+      RUSTFS_SECRET_KEY: admin123
     volumes:
-      - minio_data:/data
+      - storage_data:/data
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD-SHELL", "nc -z localhost 9000 || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 5s
 
-  minio-init:
+  storage-bucket-init:
     image: minio/mc:latest
     depends_on:
-      minio:
+      storage:
         condition: service_healthy
     restart: "no"
     entrypoint: >
       /bin/sh -c "
-      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc alias set local http://storage:9000 admin admin123;
       mc mb --ignore-existing local/myapp-files;
       "
 
@@ -107,7 +107,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  minio_data:
+  storage_data:
 ```
 
 Note: The example above shows all services. In practice, only include the services for enabled subsystems. The `mailpit` service is included when `mailer` is enabled.

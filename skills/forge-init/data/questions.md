@@ -37,7 +37,7 @@ Default suggestion: derive from app name by lowercasing and replacing spaces/spe
 - B. **Redis** — Caching, rate limiting, pub/sub
 - C. **Server-side sessions** — Cookie-based sessions with configurable store
 - D. **Background jobs** (River) — Async task processing (requires PostgreSQL)
-- E. **File storage** (S3-compatible) — Upload/download with MinIO for local dev
+- E. **File storage** (S3-compatible) — Upload/download with RustFS for local dev
 - F. **templ** — Type-safe Go HTML templating engine with templui components
 - G. **HTMX** — Hypermedia-driven interactions (vendored JS)
 - H. **Alpine.js** — Lightweight reactive JS framework (vendored JS)

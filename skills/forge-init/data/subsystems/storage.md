@@ -45,8 +45,8 @@ None.
 
 ```env
 STORAGE_BUCKET={{APP_NAME}}-files
-STORAGE_ACCESS_KEY=minioadmin
-STORAGE_SECRET_KEY=minioadmin
+STORAGE_ACCESS_KEY=admin
+STORAGE_SECRET_KEY=admin123
 STORAGE_ENDPOINT=http://localhost:9000
 STORAGE_REGION=us-east-1
 STORAGE_PATH_STYLE=true
@@ -66,32 +66,32 @@ STORAGE_PATH_STYLE=false
 ## Docker Service
 
 ```yaml
-minio:
-  image: minio/minio:latest
-  command: server /data --console-address ":9001"
-  environment:
-    MINIO_ROOT_USER: minioadmin
-    MINIO_ROOT_PASSWORD: minioadmin
+storage:
+  image: rustfs/rustfs:latest
   ports:
     - "9000:9000"
     - "9001:9001"
+  environment:
+    RUSTFS_ACCESS_KEY: admin
+    RUSTFS_SECRET_KEY: admin123
   volumes:
-    - minio_data:/data
+    - storage_data:/data
   healthcheck:
-    test: ["CMD", "mc", "ready", "local"]
+    test: ["CMD-SHELL", "nc -z localhost 9000 || exit 1"]
     interval: 5s
     timeout: 5s
     retries: 5
+    start_period: 5s
 
-minio-init:
+storage-bucket-init:
   image: minio/mc:latest
   depends_on:
-    minio:
+    storage:
       condition: service_healthy
   restart: "no"
   entrypoint: >
     /bin/sh -c "
-    mc alias set local http://minio:9000 minioadmin minioadmin;
+    mc alias set local http://storage:9000 admin admin123;
     mc mb --ignore-existing local/{{APP_NAME}}-files;
     "
 ```
@@ -99,12 +99,12 @@ minio-init:
 ## Docker Volume
 
 ```yaml
-minio_data:
+storage_data:
 ```
 
 ## Notes
 
-- Storage is S3-compatible — works with AWS S3, MinIO, DigitalOcean Spaces, etc.
-- MinIO is used for local development (docker-compose).
-- `STORAGE_PATH_STYLE=true` is required for MinIO (path-style access).
+- Storage is S3-compatible — works with AWS S3, RustFS, MinIO, DigitalOcean Spaces, etc.
+- RustFS is used for local development (docker-compose).
+- `STORAGE_PATH_STYLE=true` is required for RustFS (path-style access).
 - Available methods on `forge.Context`: `c.Upload()`, `c.FileURL()`.
