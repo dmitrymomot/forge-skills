@@ -122,6 +122,11 @@ permissionMode: plan # Optional: requires plan approval before acting
 4. Code-generating skills must verify compilation with `go build -o /dev/null`
 5. Skills that use third-party APIs must verify them with `go doc` first — never guess
 
+## Editing Gotchas
+
+- `skills/forge-init/data/base-app.md` has near-identical single-domain and multi-domain templates — include the `## main.go —` heading in edit context to avoid duplicate matches
+- Plugin version lives in `.claude-plugin/marketplace.json` — appears twice (metadata + plugin), bump both with `replace_all`
+
 ## Relationship to Global Skills
 
 The user has global skills at `~/.claude/skills/` covering Go development (`go-code`, `go-test`, `go-doc`, `go-review`, `go-comments`, `go-fix`, `go-readme`), architecture (`system-arch`, `security-arch`, `data-arch`, `ops-arch`), product (`prd`, `product-strategy`, `idea-validate`, `tech-research`), and git workflows (`git-commit`, `git-pr`, `git-release`, `git-clean`, `git-gh`). Skills in this repo should complement those by adding **Forge-specific** knowledge — not duplicate generic Go or architecture guidance.
