@@ -26,7 +26,7 @@ Each subsystem's Docker service and volume definitions are found in their respec
 
 - **db** → PostgreSQL service + `postgres_data` volume
 - **redis** → Redis service + `redis_data` volume
-- **storage** → MinIO service + `minio_data` volume
+- **storage** → MinIO service + MinIO init (bucket creation) + `minio_data` volume
 
 Other subsystems (sessions, jobs, htmx, mailer, oauth) do not have Docker services.
 
@@ -78,6 +78,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc mb --ignore-existing local/myapp-files;
+      "
 
 volumes:
   postgres_data:

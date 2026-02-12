@@ -82,6 +82,18 @@ minio:
     interval: 5s
     timeout: 5s
     retries: 5
+
+minio-init:
+  image: minio/mc:latest
+  depends_on:
+    minio:
+      condition: service_healthy
+  restart: "no"
+  entrypoint: >
+    /bin/sh -c "
+    mc alias set local http://minio:9000 minioadmin minioadmin;
+    mc mb --ignore-existing local/{{APP_NAME}}-files;
+    "
 ```
 
 ## Docker Volume
