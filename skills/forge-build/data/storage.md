@@ -29,7 +29,7 @@ c.Upload("avatar",
         storage.MinSize(1024),                    // 1KB min
         storage.ImageOnly(),                      // images only
         storage.AllowedTypes("image/*"),           // MIME filter
-        storage.FileNotEmpty(),                    // no empty files
+        storage.NotEmpty(),                         // no empty files
     ),
 )
 ```
@@ -40,13 +40,13 @@ c.Upload("avatar",
 
 ```go
 // Public URL (permanent)
-url := c.FileURL(fileKey, storage.WithPublic())
+url, err := c.FileURL(fileKey, storage.WithPublic())
 
 // Signed URL (temporary, private files)
-url := c.FileURL(fileKey, storage.WithSigned(15 * time.Minute))
+url, err := c.FileURL(fileKey, storage.WithSigned(15 * time.Minute))
 
 // Download URL (forces browser download)
-url := c.FileURL(fileKey, storage.WithDownload("report.pdf"))
+url, err := c.FileURL(fileKey, storage.WithDownload("report.pdf"))
 ```
 
 ---
@@ -57,11 +57,10 @@ Returned by `Upload()` and `UploadFromURL()`:
 
 ```go
 type FileInfo struct {
-    Key      string    // Storage key (use this to reference the file)
-    Size     int64     // File size in bytes
-    MIME     string    // Content type
-    ETag     string    // Entity tag
-    Modified time.Time // Last modified
+    Key         string // Storage key (use this to reference the file)
+    Size        int64  // File size in bytes
+    ContentType string // MIME content type
+    ACL         ACL    // Access control
 }
 ```
 
@@ -92,11 +91,16 @@ func (h *ProfileHandler) uploadAvatar(c forge.Context) error {
         AvatarKey: info.Key,
     })
     if err != nil {
-        return c.Error(err)
+        c.LogError("failed to update avatar", "error", err)
+        return forge.ErrInternal("something went wrong")
     }
 
     // Return public URL
-    url := c.FileURL(info.Key, storage.WithPublic())
+    url, err := c.FileURL(info.Key, storage.WithPublic())
+    if err != nil {
+        c.LogError("failed to generate file URL", "error", err)
+        return forge.ErrInternal("something went wrong")
+    }
     return c.JSON(http.StatusOK, map[string]string{"avatar_url": url})
 }
 ```
@@ -115,7 +119,11 @@ func (h *FileHandler) download(c forge.Context) error {
     }
 
     // Generate signed download URL
-    url := c.FileURL(file.StorageKey, storage.WithSigned(5*time.Minute), storage.WithDownload(file.Name))
+    url, err := c.FileURL(file.StorageKey, storage.WithSigned(5*time.Minute), storage.WithDownload(file.Name))
+    if err != nil {
+        c.LogError("failed to generate download URL", "error", err)
+        return forge.ErrInternal("something went wrong")
+    }
     return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 ```
@@ -132,7 +140,7 @@ info, _ := c.Upload("file", storage.WithTenant(tenantID))
 // Key becomes: "tenantID/original-key"
 
 // URL — same key works
-url := c.FileURL(info.Key, storage.WithPublic())
+url, _ := c.FileURL(info.Key, storage.WithPublic())
 ```
 
 ---
