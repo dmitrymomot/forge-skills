@@ -117,6 +117,19 @@ Never leave binary artifacts. Always use `-o /dev/null`.
 
 ---
 
+## Multi-Domain Dev URLs
+
+When the app uses `forge.Run()` (multi-domain mode), development URLs must use `lvh.me` instead of `localhost`. `lvh.me` resolves to `127.0.0.1` and supports wildcard subdomains (`*.lvh.me`), which browsers need for multi-domain routing.
+
+- Base domain: `lvh.me` (not `localhost`)
+- App URL: `http://lvh.me:8080`
+- OAuth redirect URLs: `http://lvh.me:8080/auth/{provider}/callback`
+- Cookie domain: `lvh.me`
+
+This applies only to browser-facing URLs. Docker service connections (DB, Redis, MinIO, SMTP) always use `localhost`.
+
+---
+
 ## Forge Context — Response Methods
 
 | Method | Description |
