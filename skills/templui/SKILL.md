@@ -48,6 +48,7 @@ skills/templui/components/{name}.md
 Each file contains the exact API surface — Props structs, enums, composition trees, data attributes, and usage examples. **Never guess Props or enum values.**
 
 If the user needs setup or theme guidance, also read:
+
 - `skills/templui/docs/setup.md` — templui initialization and CLI commands
 - `skills/templui/docs/theme.md` — Tailwind CSS v4 theme variables and input.css
 - `skills/templui/docs/js-integration.md` — Script() tags, dependency chains, base layout
@@ -55,6 +56,7 @@ If the user needs setup or theme guidance, also read:
 ### Step 4: GENERATE templ code
 
 Generate `.templ` files using:
+
 - **Real import paths** derived from `go.mod` module path + `.templui.json` componentsDir
 - **Forge handler patterns** (see Forge Integration below)
 - **HTMX attributes** where appropriate (Forge apps use HTMX by default)
@@ -62,6 +64,7 @@ Generate `.templ` files using:
 ### Step 5: REMIND
 
 After generating code, always tell the user:
+
 - Which `@component.Script()` tags are needed in the base layout `<head>`
 - Which components need to be installed (`go tool templui add X`)
 - Whether `input.css` theme setup is missing (reference `skills/templui/docs/theme.md`)
@@ -159,69 +162,75 @@ Before generating any component code, you MUST read the relevant component refer
 ### Available Components (41)
 
 #### Form & Input
-| Component | File | JS Required |
-|-----------|------|-------------|
-| button | `components/button.md` | No |
-| calendar | `components/calendar.md` | Yes |
-| checkbox | `components/checkbox.md` | Yes |
-| datepicker | `components/datepicker.md` | Yes |
-| form | `components/form.md` | No |
-| input | `components/input.md` | Yes |
-| inputotp | `components/inputotp.md` | Yes |
-| label | `components/label.md` | Yes |
-| radio | `components/radio.md` | No |
-| rating | `components/rating.md` | Yes |
-| selectbox | `components/selectbox.md` | Yes |
-| slider | `components/slider.md` | Yes |
-| switch | `components/switch.md` | No |
-| tagsinput | `components/tagsinput.md` | Yes |
-| textarea | `components/textarea.md` | Yes |
-| timepicker | `components/timepicker.md` | Yes |
+
+| Component  | File                       | JS Required |
+| ---------- | -------------------------- | ----------- |
+| button     | `components/button.md`     | No          |
+| calendar   | `components/calendar.md`   | Yes         |
+| checkbox   | `components/checkbox.md`   | Yes         |
+| datepicker | `components/datepicker.md` | Yes         |
+| form       | `components/form.md`       | No          |
+| input      | `components/input.md`      | Yes         |
+| inputotp   | `components/inputotp.md`   | Yes         |
+| label      | `components/label.md`      | Yes         |
+| radio      | `components/radio.md`      | No          |
+| rating     | `components/rating.md`     | Yes         |
+| selectbox  | `components/selectbox.md`  | Yes         |
+| slider     | `components/slider.md`     | Yes         |
+| switch     | `components/switch.md`     | No          |
+| tagsinput  | `components/tagsinput.md`  | Yes         |
+| textarea   | `components/textarea.md`   | Yes         |
+| timepicker | `components/timepicker.md` | Yes         |
 
 #### Layout & Navigation
-| Component | File | JS Required |
-|-----------|------|-------------|
-| accordion | `components/accordion.md` | No |
-| breadcrumb | `components/breadcrumb.md` | No |
-| pagination | `components/pagination.md` | No |
-| separator | `components/separator.md` | No |
-| sidebar | `components/sidebar.md` | Yes |
-| tabs | `components/tabs.md` | Yes |
-| tooltip | `components/tooltip.md` | No |
+
+| Component  | File                       | JS Required |
+| ---------- | -------------------------- | ----------- |
+| accordion  | `components/accordion.md`  | No          |
+| breadcrumb | `components/breadcrumb.md` | No          |
+| pagination | `components/pagination.md` | No          |
+| separator  | `components/separator.md`  | No          |
+| sidebar    | `components/sidebar.md`    | Yes         |
+| tabs       | `components/tabs.md`       | Yes         |
+| tooltip    | `components/tooltip.md`    | No          |
 
 #### Overlays & Dialogs
-| Component | File | JS Required |
-|-----------|------|-------------|
-| dialog | `components/dialog.md` | Yes |
-| dropdown | `components/dropdown.md` | Yes |
-| popover | `components/popover.md` | Yes |
-| sheet | `components/sheet.md` | No |
+
+| Component | File                     | JS Required |
+| --------- | ------------------------ | ----------- |
+| dialog    | `components/dialog.md`   | Yes         |
+| dropdown  | `components/dropdown.md` | Yes         |
+| popover   | `components/popover.md`  | Yes         |
+| sheet     | `components/sheet.md`    | No          |
 
 #### Feedback & Status
-| Component | File | JS Required |
-|-----------|------|-------------|
-| alert | `components/alert.md` | No |
-| badge | `components/badge.md` | No |
-| progress | `components/progress.md` | Yes |
-| skeleton | `components/skeleton.md` | No |
-| toast | `components/toast.md` | Yes |
+
+| Component | File                     | JS Required |
+| --------- | ------------------------ | ----------- |
+| alert     | `components/alert.md`    | No          |
+| badge     | `components/badge.md`    | No          |
+| progress  | `components/progress.md` | Yes         |
+| skeleton  | `components/skeleton.md` | No          |
+| toast     | `components/toast.md`    | Yes         |
 
 #### Display & Media
-| Component | File | JS Required |
-|-----------|------|-------------|
-| aspectratio | `components/aspectratio.md` | No |
-| avatar | `components/avatar.md` | Yes |
-| card | `components/card.md` | No |
-| carousel | `components/carousel.md` | Yes |
-| chart | `components/chart.md` | Yes |
+
+| Component   | File                        | JS Required |
+| ----------- | --------------------------- | ----------- |
+| aspectratio | `components/aspectratio.md` | No          |
+| avatar      | `components/avatar.md`      | Yes         |
+| card        | `components/card.md`        | No          |
+| carousel    | `components/carousel.md`    | Yes         |
+| chart       | `components/chart.md`       | Yes         |
 
 #### Misc
-| Component | File | JS Required |
-|-----------|------|-------------|
-| code | `components/code.md` | Yes |
-| collapsible | `components/collapsible.md` | Yes |
-| copybutton | `components/copybutton.md` | Yes |
-| icon | `components/icon.md` | No |
+
+| Component   | File                        | JS Required |
+| ----------- | --------------------------- | ----------- |
+| code        | `components/code.md`        | Yes         |
+| collapsible | `components/collapsible.md` | Yes         |
+| copybutton  | `components/copybutton.md`  | Yes         |
+| icon        | `components/icon.md`        | No          |
 
 ## Code Generation Rules
 
@@ -244,18 +253,23 @@ Before generating any component code, you MUST read the relevant component refer
 ## Common Recipes
 
 ### Page with Sidebar Layout
+
 Components needed: sidebar, icon, button
 
 ### Form Page
+
 Components needed: form, input, label, button, selectbox (if dropdowns), checkbox, textarea
 
 ### Data Table with Actions
+
 Components needed: button, dropdown, dialog (for confirm), badge, pagination, icon
 
 ### Dashboard Cards
+
 Components needed: card, chart, badge, progress, separator, tabs
 
 ### Settings Page
+
 Components needed: tabs, form, input, switch, label, button, separator, toast (for save feedback)
 
 ## Script Tags Reminder
