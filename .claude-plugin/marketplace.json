@@ -18,7 +18,7 @@
         "name": "Dmitry Momot"
       },
       "repository": "https://github.com/dmitrymomot/forge-skills",
-      "license": "MIT",
+      "license": "Apache-2.0",
       "category": "development",
       "tags": ["go", "forge", "scaffolding", "micro-saas"],
       "keywords": ["forge", "golang", "init", "scaffold", "project-setup"],
