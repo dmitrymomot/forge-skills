@@ -106,7 +106,7 @@ func main() {
 		log.Fatal("failed to load config: ", err)
 	}
 
-	ctx := context.Background()
+	ctx := context.Background() // Include only if subsystem init code uses ctx
 
 	// {{SUBSYSTEM_INIT}}
 
@@ -133,7 +133,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_ = ctx // used by subsystem init code
 }
 ```
 
@@ -159,7 +158,7 @@ func main() {
 		log.Fatal("failed to load config: ", err)
 	}
 
-	ctx := context.Background()
+	ctx := context.Background() // Include only if subsystem init code uses ctx
 
 	// {{SUBSYSTEM_INIT}}
 
@@ -187,7 +186,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_ = ctx // used by subsystem init code
 }
 ```
 
@@ -216,5 +214,5 @@ func main() {
    - **DB**: If `db` is enabled, add `dbmigrations "{{MODULE_PATH}}/db/migrations"` to main.go imports. Use `dbmigrations.FS` in init code. No `"embed"` import needed.
    - **Frontend**: If ANY frontend option (`htmx`, `alpine`, `tailwind`) is enabled, add `"{{MODULE_PATH}}/assets"` to main.go imports. Use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")` in app options. No `"embed"` import needed.
    - These import-based embeds replace the previous `{{EMBED_DIRECTIVES}}` placeholder pattern. The `//go:embed` directives live in their respective packages (`db/migrations/embed.go` and `assets/embed.go`), not in `cmd/main.go`.
-7. Remove the `_ = ctx` line if any subsystem init code uses `ctx`
+7. Only include `ctx := context.Background()` if any subsystem init code uses `ctx`
 8. Remove trailing commas and empty comment blocks if no subsystems are enabled

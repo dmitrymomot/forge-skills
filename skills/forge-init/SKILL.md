@@ -127,7 +127,7 @@ Compose `cmd/main.go` by:
 2. Placing init code in dependency order (db first, then redis, storage, mailer, oauth)
 3. Assembling health checks, app options, and shutdown hooks
 4. Replacing `{{APP_NAME}}` with the actual app name
-5. Removing unused placeholder comments and the `_ = ctx` line if ctx is used
+5. Removing unused placeholder comments and only including `ctx := context.Background()` if subsystem init code uses ctx
 
 ---
 
