@@ -35,8 +35,8 @@ func (h *MyHandler) list(c forge.Context) error {
 
 - Sessions: `WithSession()`, then `c.AuthenticateSession()`, `c.IsAuthenticated()`, `c.UserID()`
 - RBAC: `WithRoles()`, then `c.Can("permission")`, `c.Role()`
-- Jobs: `WithJobs()` (River-based), then `c.Enqueue("task_name", payload)`
-- Storage: `WithStorage()` (S3-compatible), then `c.Upload()`, `c.FileURL()`
+- Jobs: `WithJobs(pool, job.Config{}, ...)` (River-based), register with `job.WithTask`/`job.WithScheduledTask`
+- Storage: `WithStorage()` (S3-compatible), then `c.Upload()`, `c.FileURL()` (returns `string, error`)
 - HTMX: `c.IsHTMX()`, `c.RenderPartial(fullPage, partial)`
 
 **Utility packages** in `pkg/`: binder, cache, clientip, cookie, db, dnsverify, fingerprint, geolocation, hostrouter, htmx, i18n, id, job, jwt, logger, mailer, oauth, qrcode, ratelimit, redis, sanitizer, secrets, slug, storage, token, totp
@@ -46,6 +46,20 @@ func (h *MyHandler) list(c forge.Context) error {
 **Data binding/validation** uses semicolon-separated tags: `validate:"required;max:100"` / `sanitize:"trim;numeric"`
 
 **Type-safe params**: `forge.Param[int64](c, "id")`, `forge.QueryDefault[int](c, "page", 1)`
+
+## Forge API Gotchas (Common Mistakes in Data Files)
+
+- Route params: `{id}` not `:id` — Forge uses chi-style routing
+- `c.Bind(&req)` returns `(ValidationErrors, error)` — check both
+- `c.AuthenticateSession(userID)` returns `error` — must check it
+- `forge.SessionGet[T](c, key)` / `forge.SessionSet(c, key, value)` — standalone generics, not methods
+- `c.FileURL(key, opts...)` returns `(string, error)` — not just string
+- SSE constructors require event name: `forge.SSEJSON(event, data)`, `forge.SSEString(event, data)`
+- `storage.NotEmpty()` not `storage.FileNotEmpty()`
+- `c.SetCookie(name, value, maxAge)` — three args, not a cookie struct
+- `c.Flash(key, dest)` / `c.SetFlash(key, value)` — key-value based
+- River default retry: 25 attempts, not 3. Priority: lower number = higher
+- Verify data files against source at `../forge` when accuracy matters
 
 ## Forge Design Rules (Skills Must Enforce)
 
