@@ -149,6 +149,7 @@ import (
 
 	"github.com/dmitrymomot/forge"
 	"github.com/dmitrymomot/forge/middlewares"
+	"github.com/dmitrymomot/forge/pkg/logger"
 	// {{SUBSYSTEM_IMPORTS}}
 )
 
@@ -162,8 +163,10 @@ func main() {
 
 	// {{SUBSYSTEM_INIT}}
 
+	l := logger.New(forge.RequestIDExtractor()).With("component", "{{APP_NAME}}")
+
 	app := forge.New(cfg.App,
-		forge.WithLogger("{{APP_NAME}}", forge.RequestIDExtractor()),
+		forge.WithCustomLogger(l),
 		forge.WithCookieConfig(cfg.Cookie),
 		forge.WithMiddleware(
 			middlewares.RequestID(middlewares.RequestIDConfig{}),
@@ -180,6 +183,7 @@ func main() {
 	// app.Register(&handler.MyHandler{})
 
 	if err := forge.Run(cfg.Run,
+		forge.WithRunLogger(l),
 		forge.WithFallback(app),
 		// {{SUBSYSTEM_SHUTDOWN_HOOKS}}
 	); err != nil {
