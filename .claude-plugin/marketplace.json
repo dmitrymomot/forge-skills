@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Claude Code skills for building applications with the Forge Go micro-SaaS framework",
-    "version": "0.3.2"
+    "version": "0.3.3"
   },
   "plugins": [
     {
       "name": "forge-skills",
       "source": "./",
       "description": "Claude Code skills for building applications with the Forge Go micro-SaaS framework",
-      "version": "0.3.2",
+      "version": "0.3.3",
       "author": {
         "name": "Dmitry Momot"
       },
