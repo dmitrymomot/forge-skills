@@ -63,7 +63,7 @@ go tool task dev          # Run with hot reload
 go tool task build        # Build binary
 go tool task test         # Run tests
 go tool task lint         # Run linter
-go tool task tidy         # Tidy go modules
+go tool task deps         # Update and tidy dependencies
 ```
 
 <!-- CONDITIONAL_COMMANDS -->

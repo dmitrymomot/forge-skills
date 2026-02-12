@@ -48,9 +48,10 @@ tasks:
       - go tool betteralign ./...
       - go tool modernize $(go list ./...)
 
-  tidy:
-    desc: Tidy go modules
+  deps:
+    desc: Update and tidy go module dependencies
     cmds:
+      - go get -u ./...
       - go mod tidy
 ```
 
@@ -116,7 +117,7 @@ test:up:
   cmds:
     - docker compose -f docker-compose.test.yml up -d --wait {{SERVICES_LIST}}
     # If storage is enabled, add this second line:
-    # - docker compose -f docker-compose.test.yml up minio-init
+    # - docker compose -f docker-compose.test.yml up storage-bucket-init
 
 test:down:
   desc: Stop and remove test infrastructure
@@ -132,8 +133,8 @@ test:integration:
 ```
 
 Assembly notes:
-- `{{SERVICES_LIST}}` is built from the enabled subsystems' Docker service names (e.g., `postgres redis minio mailpit`).
-- If storage is enabled, add the `minio-init` line to `test:up` after the main `--wait` command.
+- `{{SERVICES_LIST}}` is built from the enabled subsystems' Docker service names (e.g., `postgres redis storage mailpit`).
+- If storage is enabled, add the `storage-bucket-init` line to `test:up` after the main `--wait` command.
 - Only include this section when at least one Docker service exists (same condition as docker tasks).
 
 ## Conditional: templ generate task (when `templ` is enabled)
@@ -173,5 +174,5 @@ Adjust the setup task:
 - The `db:migration:create` task uses goose to create migration files in the `db/migrations/` directory. Usage: `go tool task db:migration:create -- add_users_table`
 - The `db:generate` task runs sqlc to generate Go code from SQL queries into `internal/repository/`. Usage: `go tool task db:generate`
 - `{{MODULE_PATH}}` in the `fmt` task must be replaced with the actual Go module path during generation.
-- `{{SERVICES_LIST}}` in the `test:up` task must be replaced with the space-separated list of Docker service names for the enabled subsystems (e.g., `postgres redis minio mailpit`).
+- `{{SERVICES_LIST}}` in the `test:up` task must be replaced with the space-separated list of Docker service names for the enabled subsystems (e.g., `postgres redis storage mailpit`).
 - Add custom tasks as needed for the specific project.
