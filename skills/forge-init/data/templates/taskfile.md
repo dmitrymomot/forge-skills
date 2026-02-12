@@ -84,11 +84,26 @@ assets:download:
     - curl -sL https://unpkg.com/htmx.org/dist/ext/ws.js -o assets/static/js/htmx-ws.js
     # alpine:
     - curl -sL https://unpkg.com/alpinejs/dist/cdn.min.js -o assets/static/js/alpine.min.js
-    # tailwind:
-    - curl -sL https://unpkg.com/@tailwindcss/browser@4/dist/cdn.min.js -o assets/static/js/tailwind.min.js
+    # tailwind (elements.js — only when templ is NOT selected):
+    - curl -sL "https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" | sed '/^\/\/# sourceMappingURL=/d' > "assets/static/js/elements.min.js"
 ```
 
 Only include the curl lines for selected libraries. If none of htmx/alpine/tailwind are selected, omit the entire `assets:download` task.
+
+## Conditional: CSS build task (when `tailwind` is enabled)
+
+```yaml
+css:
+  desc: Build Tailwind CSS files
+  cmds:
+    # Single-domain (one CSS file):
+    - tailwindcss -i assets/src/app.css -o assets/static/css/app.css --minify
+    # Multi-domain (one line per domain — include only the relevant lines):
+    # - tailwindcss -i assets/src/website.css -o assets/static/css/website.css --minify
+    # - tailwindcss -i assets/src/app.css -o assets/static/css/app.css --minify
+```
+
+For single-domain projects, include only the single `app.css` line. For multi-domain projects, include one line per domain CSS source file (uncomment and adjust as needed). Omit this task entirely if `tailwind` is not selected.
 
 ## Conditional: Docker tasks (when any Docker service exists)
 
@@ -162,6 +177,7 @@ Adjust the setup task:
 
 - If no Docker services exist, remove the `task: docker:up` line.
 - If no frontend download libraries are selected (htmx/alpine/tailwind), remove the `task: assets:download` line.
+- If `tailwind` is enabled, add `- task: css` after the `task: assets:download` line to compile CSS after downloading assets.
 
 ## Notes
 

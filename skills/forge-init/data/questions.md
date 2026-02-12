@@ -42,7 +42,7 @@ Default suggestion: derive from app name by lowercasing and replacing spaces/spe
 - F. **templ** — Type-safe Go HTML templating engine with templui components
 - G. **HTMX** — Hypermedia-driven interactions (vendored JS)
 - H. **Alpine.js** — Lightweight reactive JS framework (vendored JS)
-- I. **TailwindCSS** — Utility-first CSS framework (vendored CSS)
+- I. **TailwindCSS** — Utility-first CSS framework (CLI build)
 - J. **Email** (SMTP / Mailpit) — Transactional email with template rendering
 - K. **OAuth** (Google/GitHub) — Social login providers
 - L. **None** — Minimal app with health checks only

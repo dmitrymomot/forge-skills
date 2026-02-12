@@ -83,7 +83,7 @@ Insert one bullet per enabled subsystem into the `<!-- SUBSYSTEM_BULLETS -->` pl
 | templ | - **templ** — Type-safe HTML templates. Run `go tool templ generate` to compile `.templ` files |
 | htmx | - **HTMX** — `c.IsHTMX()`, `c.RenderPartial(fullPage, partial)`. Vendored JS in `assets/static/js/` |
 | alpine | - **Alpine.js** — Lightweight JS framework. Vendored in `assets/static/js/` |
-| tailwind | - **TailwindCSS** — Utility CSS framework. Vendored browser build in `assets/static/js/` |
+| tailwind | - **TailwindCSS** — Utility CSS framework. CLI-compiled CSS in `assets/static/css/`. Source configs in `assets/src/` |
 | mailer | - **Email** — SMTP mailer (Mailpit in dev). Templates in `templates/emails/`, layouts in `templates/emails/layouts/`. Config: `mailer.Config` + `smtp.Config` |
 | oauth | - **OAuth** — Google and GitHub providers. Config: `oauth.GoogleConfig` + `oauth.GitHubConfig` |
 
@@ -155,6 +155,14 @@ go tool task db:generate                     # Generate sqlc code
 ````markdown
 ```bash
 go tool task assets:download  # Download vendored frontend assets
+```
+````
+
+### When tailwind is enabled:
+
+````markdown
+```bash
+go tool task css              # Build Tailwind CSS files
 ```
 ````
 

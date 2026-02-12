@@ -61,6 +61,7 @@ Create the base directories and any conditional directories for enabled subsyste
 Key rules:
 - When `db` is selected, create `db/{migrations,queries}/` tree, `internal/repository/`, and generate files per `templates/db-init.md` and `templates/sqlc.md`
 - When ANY frontend option (htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the shared `assets/{src,static/{css,js,img}}` tree — only once
+- When `tailwind` is selected, CSS source files will be created in `assets/src/` during Phase 4
 - When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/` directories (email template files are generated in Phase 4)
 
 ---
@@ -140,6 +141,13 @@ Read each template file and generate the corresponding project file:
 - Read `skills/forge-init/data/templates/taskfile.md` → write `Taskfile.yml` (include conditional sections based on enabled subsystems)
   - If `db` is selected, include the `db:migration:create` and `db:generate` tasks
   - If any of htmx/alpine/tailwind is selected, include the `assets:download` task with only the curl lines for selected libraries
+  - If `tailwind` is selected, include the `css` task with the appropriate build commands for single-domain or multi-domain mode
+- When `tailwind` is selected, generate CSS source file(s) in `assets/src/`:
+  - Single-domain: create `assets/src/app.css`
+  - Multi-domain: create separate CSS per domain (e.g., `assets/src/website.css`, `assets/src/app.css`)
+  - Read the CSS source template from `skills/forge-init/data/subsystems/tailwind.md`
+  - Each CSS source file uses `@import "tailwindcss" source(none)` with `@source` directives pointing to relevant template/component directories
+  - If `htmx` is also selected, include HTMX transition utilities in the CSS
 - Read `skills/forge-init/data/templates/docker-compose.md` → write `docker-compose.yml` **only if** any enabled subsystem has Docker services (db, redis, storage) or mailer is enabled. If no Docker services exist and mailer is not enabled, skip this file entirely.
 - Read `skills/forge-init/data/templates/docker-compose-test.md` → write `docker-compose.test.yml` **only if** any enabled subsystem has Docker services (db, redis, storage) or mailer is enabled. Include only the service snippets for enabled subsystems. This file uses tmpfs mounts for fast ephemeral test infrastructure.
 - Read `skills/forge-init/data/templates/gitignore.md` → write `.gitignore`
@@ -219,6 +227,12 @@ If any of htmx/alpine/tailwind is selected, also run:
 go tool task assets:download
 ```
 
+If `tailwind` is enabled, also run after assets:download:
+
+```bash
+go tool task css
+```
+
 ---
 
 ## Phase 7: Verify Compilation
@@ -257,6 +271,7 @@ Display a summary to the user:
 6. **Next steps**:
     - `go tool task docker:up` (if Docker services exist)
     - `go tool task assets:download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
+    - `go tool task css` (if tailwind enabled — rebuild CSS after template changes)
     - `go tool task fmt` to format code and imports
     - `go tool task dev` to start developing
     - `go tool task test:integration` to run integration tests with Docker infrastructure (if Docker services or mailer exist) — uses `docker-compose.test.yml` with tmpfs for fast ephemeral test runs
