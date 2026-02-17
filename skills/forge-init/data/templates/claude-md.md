@@ -63,6 +63,8 @@ just dev          # Run with hot reload
 just build        # Build binary
 just test         # Run tests
 just lint         # Run linter
+just check        # Format, lint, and test (pre-commit)
+just clean        # Remove build artifacts and caches
 just deps         # Update and tidy dependencies
 ```
 
@@ -147,6 +149,10 @@ just docker-down  # Stop Docker services
 ```bash
 just db-migration-create <name>  # Create migration
 just db-generate                  # Generate sqlc code
+just db-migrate                   # Run pending migrations
+just db-migrate-down              # Rollback last migration
+just db-status                    # Show migration status
+just db-reset                     # Drop + re-migrate (with confirmation)
 ```
 ````
 
@@ -171,6 +177,24 @@ just css              # Build Tailwind CSS files
 ````markdown
 ```bash
 just templ-generate  # Compile .templ files to Go
+```
+````
+
+### When db OR templ is enabled:
+
+````markdown
+```bash
+just generate         # Run all code generation (sqlc + templ)
+```
+````
+
+Only list the generators that are actually enabled in the parenthetical. E.g., if only db: `(sqlc)`. If only templ: `(templ)`. If both: `(sqlc + templ)`.
+
+### When any Docker service exists (integration tests):
+
+````markdown
+```bash
+just test-integration  # Run integration tests (or: just ti)
 ```
 ````
 

@@ -141,9 +141,11 @@ Read each template file and generate the corresponding project file:
 - Read `skills/forge-init/data/templates/air-toml.md` → write `.air.toml`
   - If `templ` is selected, use the extended `include_ext` with `"templ"` added
 - Read `skills/forge-init/data/templates/justfile.md` → write `justfile` (include conditional sections based on enabled subsystems)
-  - If `db` is selected, include the `db-migration-create` and `db-generate` recipes
+  - If `db` is selected, include `db-migration-create`, `db-generate`, `db-migrate`, `db-migrate-down`, `db-status`, and `db-reset` recipes
+  - If `db` OR `templ` is selected, include the `generate` meta-recipe with only the `just <x>` lines for enabled generators
   - If any of htmx/alpine/tailwind is selected, include the `assets-download` recipe with only the curl lines for selected libraries
   - If `tailwind` is selected, include the `css` recipe with the appropriate build commands for single-domain or multi-domain mode
+  - If any Docker service exists, include the single `test-integration` recipe with `ti` alias (self-contained: start, test, teardown)
 - When `tailwind` is selected, generate CSS source file(s) in `assets/src/`:
   - Single-domain: create `assets/src/app.css`
   - Multi-domain: create separate CSS per domain (e.g., `assets/src/website.css`, `assets/src/app.css`)
@@ -277,11 +279,13 @@ Display a summary to the user:
 5. **Generated files**: tree listing (include `CLAUDE.md`)
 6. **Next steps**:
     - `just docker-up` (if Docker services exist)
+    - `just db-migrate` to run initial migrations (if db enabled)
     - `just assets-download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
     - `just css` (if tailwind enabled — rebuild CSS after template changes)
-    - `just fmt` to format code and imports
+    - `just check` to format, lint, and test in one shot
     - `just dev` to start developing
-    - `just test-integration` to run integration tests with Docker infrastructure (if Docker services or mailer exist) — uses `docker-compose.test.yml` with tmpfs for fast ephemeral test runs
+    - `just test-integration` (or `just ti`) to run integration tests with Docker infrastructure (if Docker services or mailer exist) — fully self-contained: starts infra, tests, tears down
+    - `just generate` to run all code generators (if db or templ enabled)
     - Create handlers in `internal/handler/`
     - Create migrations with `just db-migration-create <name>` (if db enabled)
     - Generate repository code with `just db-generate` after adding SQL queries (if db enabled)
