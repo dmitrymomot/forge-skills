@@ -1,21 +1,21 @@
 {
   "name": "forge-skills",
   "owner": {
-    "name": "Dmitry Momot",
+    "name": "Dmytro Momot",
     "email": "mail@dmitrymomot.com"
   },
   "metadata": {
     "description": "Claude Code skills for building applications with the Forge Go micro-SaaS framework",
-    "version": "0.3.4"
+    "version": "0.3.5"
   },
   "plugins": [
     {
       "name": "forge-skills",
       "source": "./",
       "description": "Claude Code skills for building applications with the Forge Go micro-SaaS framework",
-      "version": "0.3.4",
+      "version": "0.3.5",
       "author": {
-        "name": "Dmitry Momot"
+        "name": "Dmytro Momot"
       },
       "repository": "https://github.com/dmitrymomot/forge-skills",
       "license": "Apache-2.0",
