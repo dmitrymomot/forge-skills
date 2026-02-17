@@ -59,6 +59,6 @@ None — uses the same PostgreSQL instance as the `db` subsystem.
 ## Notes
 
 - Jobs require the `db` subsystem. If the user selects jobs without db, auto-add db.
-- Creates `internal/worker/` directory for job handler implementations.
+- Creates `internal/tasks/` directory for job handler implementations.
 - Workers are registered via `app.RegisterWorker()` or similar pattern.
 - The `pool` variable must be available from DB init before `WithJobs` is called.

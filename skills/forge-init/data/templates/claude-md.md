@@ -80,7 +80,7 @@ Insert one bullet per enabled subsystem into the `<!-- SUBSYSTEM_BULLETS -->` pl
 | db | - **PostgreSQL** — Migrations in `db/migrations/`, sqlc queries in `db/queries/`, generated repo in `internal/repository/`. Config: `db.Config` |
 | redis | - **Redis** — Cache and session backend. Config: `forgeredis.Config` |
 | sessions | - **Sessions** — PostgreSQL-backed session store in `internal/sessionstore/`. `c.AuthenticateSession()`, `c.IsAuthenticated()`, `c.UserID()`. Enabled via `forge.WithSession()` |
-| jobs | - **Jobs** — River-based background jobs. `c.Enqueue("task_name", payload)`. Workers in `internal/worker/`. Config: `job.Config` |
+| jobs | - **Jobs** — River-based background jobs. `c.Enqueue("task_name", payload)`. Workers in `internal/tasks/`. Config: `job.Config` |
 | storage | - **Storage** — S3-compatible file storage. `c.Upload()`, `c.FileURL()`. Config: `storage.Config` |
 | templ | - **templ** — Type-safe HTML templates. Run `go tool templ generate` to compile `.templ` files |
 | htmx | - **HTMX** — `c.IsHTMX()`, `c.RenderPartial(fullPage, partial)`. Vendored JS in `assets/static/js/` |

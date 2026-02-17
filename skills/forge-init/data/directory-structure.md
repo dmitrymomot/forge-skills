@@ -24,7 +24,7 @@
 
 | Directory                      | Created when                     | Purpose                              |
 |--------------------------------|----------------------------------|--------------------------------------|
-| `internal/worker/`             | jobs                             | Background job workers               |
+| `internal/tasks/`              | jobs                             | Background job workers               |
 | `db/migrations/`               | db                               | SQL migration files (goose) + embed  |
 | `db/queries/`                  | db                               | sqlc query files                     |
 | `internal/repository/`         | db                               | sqlc generated Go code               |
