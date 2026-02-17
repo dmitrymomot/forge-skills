@@ -19,7 +19,7 @@ Requires Claude Code v1.0.33+.
 
 Scaffolds a complete Forge project with configurable subsystems: PostgreSQL, Redis, sessions, jobs, storage, templ, HTMX, Alpine.js, Tailwind CSS, mailer, and OAuth.
 
-Generates: `main.go`, config, `docker-compose.yml`, `.env`, `Taskfile.yml`, `.air.toml`, `.editorconfig`, `.gitignore`.
+Generates: `main.go`, config, `docker-compose.yml`, `.env`, `justfile`, `.air.toml`, `.editorconfig`, `.gitignore`.
 
 ### `/forge-build <feature description>`
 

@@ -7,9 +7,9 @@ This guide covers setting up templui in a Forge app **after** `forge-init` has s
 - Added `templ` and `templui` CLIs to `go.mod` tool directive
 - Created `assets/` directory with `embed.go`, `static/css/`, `static/js/`, `static/img/`
 - Configured `.air.toml` to watch `.templ` files and run `go tool templ generate`
-- Set up `Taskfile.yml` with `templ:generate` and `assets:download` tasks
+- Set up `justfile` with `templ-generate` and `assets-download` recipes
 - Vendored HTMX and Alpine as `htmx.min.js` / `alpine.min.js` in `assets/static/js/`
-- Created CSS source files in `assets/src/` with Tailwind CLI build configured via `css` Taskfile task
+- Created CSS source files in `assets/src/` with Tailwind CLI build configured via `css` justfile recipe
 - Configured `forge.WithStaticFiles()` in `main.go` for serving assets
 
 ## What You Still Need to Do
@@ -156,5 +156,5 @@ myapp/
 │       └── home.templ
 ├── .templui.json               ← templui config
 ├── go.mod
-└── Taskfile.yml
+└── justfile
 ```

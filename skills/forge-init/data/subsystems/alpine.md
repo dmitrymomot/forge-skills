@@ -50,7 +50,7 @@ Download Alpine.js into the vendored assets directory:
 curl -sL https://unpkg.com/alpinejs/dist/cdn.min.js -o assets/static/js/alpine.min.js
 ```
 
-These commands are included in the `assets:download` Taskfile task.
+These commands are included in the `assets-download` justfile recipe.
 
 ## Notes
 

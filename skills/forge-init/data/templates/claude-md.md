@@ -42,7 +42,7 @@ Data binding/validation uses semicolon-separated tags: `validate:"required;max:1
 - No reflection, no service containers, no magic
 - Packages receive values via parameters, not context
 - All IDs via `pkg/id/` — never `uuid.New()` or `ulid.Make()`
-- Modern Go 1.25+: `for range n`, `min()`/`max()`, `clear()`, `slices.Contains()`
+- Modern Go 1.26+: `for range n`, `min()`/`max()`, `clear()`, `slices.Contains()`, `errors.AsType[T]()`, `reflect.Value.Fields()`
 - Validator/sanitizer tags use semicolons as separators, colons for params
 - `go build -o /dev/null ./...` — never leave binary artifacts
 - `requestContext` session methods are NOT goroutine-safe
@@ -59,11 +59,11 @@ Data binding/validation uses semicolon-separated tags: `validate:"required;max:1
 ## Common Commands
 
 ```bash
-go tool task dev          # Run with hot reload
-go tool task build        # Build binary
-go tool task test         # Run tests
-go tool task lint         # Run linter
-go tool task deps         # Update and tidy dependencies
+just dev          # Run with hot reload
+just build        # Build binary
+just test         # Run tests
+just lint         # Run linter
+just deps         # Update and tidy dependencies
 ```
 
 <!-- CONDITIONAL_COMMANDS -->
@@ -119,7 +119,7 @@ Replace `<!-- PROJECT_STRUCTURE -->` with a directory tree matching the actual g
 ├── .env.example
 ├── .gitignore
 ├── CLAUDE.md
-├── Taskfile.yml
+├── justfile
 ├── docker-compose.yml
 ├── go.mod
 └── go.sum
@@ -136,8 +136,8 @@ Replace `<!-- CONDITIONAL_COMMANDS -->` with additional command blocks based on 
 
 ````markdown
 ```bash
-go tool task docker:up    # Start Docker services
-go tool task docker:down  # Stop Docker services
+just docker-up    # Start Docker services
+just docker-down  # Stop Docker services
 ```
 ````
 
@@ -145,8 +145,8 @@ go tool task docker:down  # Stop Docker services
 
 ````markdown
 ```bash
-go tool task db:migration:create -- <name>  # Create migration
-go tool task db:generate                     # Generate sqlc code
+just db-migration-create <name>  # Create migration
+just db-generate                  # Generate sqlc code
 ```
 ````
 
@@ -154,7 +154,7 @@ go tool task db:generate                     # Generate sqlc code
 
 ````markdown
 ```bash
-go tool task assets:download  # Download vendored frontend assets
+just assets-download  # Download vendored frontend assets
 ```
 ````
 
@@ -162,7 +162,7 @@ go tool task assets:download  # Download vendored frontend assets
 
 ````markdown
 ```bash
-go tool task css              # Build Tailwind CSS files
+just css              # Build Tailwind CSS files
 ```
 ````
 
@@ -170,7 +170,7 @@ go tool task css              # Build Tailwind CSS files
 
 ````markdown
 ```bash
-go tool task templ:generate  # Compile .templ files to Go
+just templ-generate  # Compile .templ files to Go
 ```
 ````
 

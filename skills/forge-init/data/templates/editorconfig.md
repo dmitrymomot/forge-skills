@@ -21,7 +21,7 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-[Taskfile.yml]
+[justfile]
 indent_style = space
 indent_size = 4
 
@@ -47,5 +47,5 @@ indent_size = 4
 
 - `root = true` stops editors from searching parent directories for additional `.editorconfig` files.
 - Go uses tabs per `gofmt` convention.
-- `Taskfile.yml` overrides the default YAML 2-space rule because Taskfile uses 4-space indentation.
+- `justfile` overrides default settings with 4-space indentation per justfile convention.
 - Markdown preserves trailing whitespace (used for line breaks in CommonMark).

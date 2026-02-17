@@ -6,21 +6,20 @@ These templates form the foundation of every generated Forge app. Subsystem-spec
 
 ## go.mod Requirements
 
-The generated `go.mod` must specify Go 1.25 as the minimum version:
+The generated `go.mod` must specify Go 1.26 as the minimum version:
 
 ```
-go 1.25
+go 1.26
 ```
 
 ### Tool Directive
 
-Go 1.25+ supports a `tool (...)` directive in go.mod for dev tool dependencies. Include the following base tools in every project:
+Go 1.26+ supports a `tool (...)` directive in go.mod for dev tool dependencies. Include the following base tools in every project:
 
 ```
 tool (
 	github.com/air-verse/air
 	github.com/dkorunic/betteralign/cmd/betteralign
-	github.com/go-task/task/v3/cmd/task
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	github.com/pressly/goose/v3/cmd/goose
 	go.uber.org/nilaway/cmd/nilaway

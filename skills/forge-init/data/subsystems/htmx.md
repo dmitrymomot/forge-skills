@@ -50,7 +50,7 @@ Download HTMX into the vendored assets directory:
 curl -sL https://unpkg.com/htmx.org/dist/htmx.min.js -o assets/static/js/htmx.min.js
 ```
 
-These commands are included in the `assets:download` Taskfile task.
+These commands are included in the `assets-download` justfile recipe.
 
 ## Notes
 

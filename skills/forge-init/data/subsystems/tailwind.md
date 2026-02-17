@@ -50,7 +50,7 @@ None.
 curl -sL "https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" | sed '/^\/\/# sourceMappingURL=/d' > "assets/static/js/elements.min.js"
 ```
 
-These commands are included in the `assets:download` Taskfile task.
+These commands are included in the `assets-download` justfile recipe.
 
 ## CSS Source Files
 
@@ -89,7 +89,7 @@ For multi-domain setups, each CSS source file should use `@source` directives po
 
 ## Build Commands
 
-CSS compilation is handled by the `css` Taskfile task using the `tailwindcss` standalone CLI binary:
+CSS compilation is handled by the `css` justfile recipe using the `tailwindcss` standalone CLI binary:
 
 - **Single-domain:** `tailwindcss -i assets/src/app.css -o assets/static/css/app.css --minify`
 - **Multi-domain:** One command per domain CSS file

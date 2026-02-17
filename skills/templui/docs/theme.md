@@ -242,7 +242,7 @@ Add this script to your base layout for system-preference detection and manual t
 
 ## Extending the Forge-Init CSS
 
-forge-init already creates CSS source files in `assets/src/` and a `css` Taskfile task that compiles them with the `tailwindcss` standalone CLI. To add templui theme support, extend the existing CSS source file(s).
+forge-init already creates CSS source files in `assets/src/` and a `css` justfile recipe that compiles them with the `tailwindcss` standalone CLI. To add templui theme support, extend the existing CSS source file(s).
 
 ### 1. Update CSS Source File
 
@@ -252,10 +252,10 @@ Keep the existing `@source` directives from forge-init but add the `@custom-vari
 
 ### 2. Rebuild CSS
 
-Run the existing `css` Taskfile task to recompile:
+Run the existing `css` justfile recipe to recompile:
 
 ```bash
-go tool task css
+just css
 ```
 
 ### 3. Watch Mode (Optional)
@@ -266,4 +266,4 @@ For development, you can run the `tailwindcss` CLI in watch mode:
 tailwindcss -i assets/src/app.css -o assets/static/css/app.css --watch
 ```
 
-Consider adding a `css:watch` task to your `Taskfile.yml` for convenience.
+Consider adding a `css-watch` recipe to your `justfile` for convenience.

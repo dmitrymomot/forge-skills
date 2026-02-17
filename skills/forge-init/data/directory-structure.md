@@ -15,7 +15,7 @@
 ├── .env.example
 ├── .gitignore
 ├── CLAUDE.md
-├── Taskfile.yml
+├── justfile
 ├── go.mod
 └── go.sum
 ```

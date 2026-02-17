@@ -140,10 +140,10 @@ Read each template file and generate the corresponding project file:
 
 - Read `skills/forge-init/data/templates/air-toml.md` → write `.air.toml`
   - If `templ` is selected, use the extended `include_ext` with `"templ"` added
-- Read `skills/forge-init/data/templates/taskfile.md` → write `Taskfile.yml` (include conditional sections based on enabled subsystems)
-  - If `db` is selected, include the `db:migration:create` and `db:generate` tasks
-  - If any of htmx/alpine/tailwind is selected, include the `assets:download` task with only the curl lines for selected libraries
-  - If `tailwind` is selected, include the `css` task with the appropriate build commands for single-domain or multi-domain mode
+- Read `skills/forge-init/data/templates/justfile.md` → write `justfile` (include conditional sections based on enabled subsystems)
+  - If `db` is selected, include the `db-migration-create` and `db-generate` recipes
+  - If any of htmx/alpine/tailwind is selected, include the `assets-download` recipe with only the curl lines for selected libraries
+  - If `tailwind` is selected, include the `css` recipe with the appropriate build commands for single-domain or multi-domain mode
 - When `tailwind` is selected, generate CSS source file(s) in `assets/src/`:
   - Single-domain: create `assets/src/app.css`
   - Multi-domain: create separate CSS per domain (e.g., `assets/src/website.css`, `assets/src/app.css`)
@@ -186,7 +186,7 @@ Run these commands in the current directory:
 go mod init <module-path>
 ```
 
-Then edit `go.mod` to set `go 1.25` and add the tool directive. Read `skills/forge-init/data/base-app.md` for the full tool list.
+Then edit `go.mod` to set `go 1.26` and add the tool directive. Read `skills/forge-init/data/base-app.md` for the full tool list.
 
 The tool directive block to add:
 
@@ -194,7 +194,6 @@ The tool directive block to add:
 tool (
 	github.com/air-verse/air
 	github.com/dkorunic/betteralign/cmd/betteralign
-	github.com/go-task/task/v3/cmd/task
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	github.com/pressly/goose/v3/cmd/goose
 	go.uber.org/nilaway/cmd/nilaway
@@ -232,13 +231,13 @@ go tool sqlc generate -f db/sqlc.yml
 If any of htmx/alpine/tailwind is selected, also run:
 
 ```bash
-go tool task assets:download
+just assets-download
 ```
 
-If `tailwind` is enabled, also run after assets:download:
+If `tailwind` is enabled, also run after assets-download:
 
 ```bash
-go tool task css
+just css
 ```
 
 ---
@@ -277,15 +276,15 @@ Display a summary to the user:
 4. **Enabled subsystems**: list with checkmarks
 5. **Generated files**: tree listing (include `CLAUDE.md`)
 6. **Next steps**:
-    - `go tool task docker:up` (if Docker services exist)
-    - `go tool task assets:download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
-    - `go tool task css` (if tailwind enabled — rebuild CSS after template changes)
-    - `go tool task fmt` to format code and imports
-    - `go tool task dev` to start developing
-    - `go tool task test:integration` to run integration tests with Docker infrastructure (if Docker services or mailer exist) — uses `docker-compose.test.yml` with tmpfs for fast ephemeral test runs
+    - `just docker-up` (if Docker services exist)
+    - `just assets-download` (if htmx/alpine/tailwind selected — remind them to re-run after updates)
+    - `just css` (if tailwind enabled — rebuild CSS after template changes)
+    - `just fmt` to format code and imports
+    - `just dev` to start developing
+    - `just test-integration` to run integration tests with Docker infrastructure (if Docker services or mailer exist) — uses `docker-compose.test.yml` with tmpfs for fast ephemeral test runs
     - Create handlers in `internal/handler/`
-    - Create migrations with `go tool task db:migration:create -- <name>` (if db enabled)
-    - Generate repository code with `go tool task db:generate` after adding SQL queries (if db enabled)
+    - Create migrations with `just db-migration-create <name>` (if db enabled)
+    - Generate repository code with `just db-generate` after adding SQL queries (if db enabled)
     - Customize email templates in `templates/emails/` (if mailer enabled)
     - Set up OAuth credentials (if oauth enabled)
     - Health checks available at `/_live` and `/_ready`
