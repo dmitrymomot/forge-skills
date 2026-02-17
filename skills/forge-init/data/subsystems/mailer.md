@@ -232,7 +232,7 @@ If you didn't create an account with {{APP_NAME}}, please ignore this email.
 ## Env Vars (dev)
 
 ```env
-MAILER_FROM_NAME={{APP_NAME}}
+MAILER_FROM_NAME="{{APP_NAME}}"
 MAILER_FROM_EMAIL=noreply@localhost
 SMTP_HOST=localhost
 SMTP_PORT=1025

@@ -19,7 +19,7 @@ default:
     @just --list
 
 [group('dev')]
-dev:
+dev: docker-up generate css
     go tool air
 
 [group('dev')]
@@ -34,7 +34,7 @@ run: build
 fmt:
     go fmt ./...
     go tool goimports -w -local {{MODULE_PATH}} .
-    go tool betteralign -apply ./...
+    -go tool betteralign -apply ./...
 
 [group('quality')]
 test:
@@ -47,7 +47,7 @@ lint:
     go tool golangci-lint run ./...
     go tool nilaway ./...
     go tool betteralign ./...
-    go tool modernize $(go list ./...)
+    go tool modernize $(go list ./... | grep -v /internal/repository)
 
 [group('quality')]
 check: fmt lint test
@@ -77,21 +77,21 @@ db-generate:
 
 [group('db')]
 db-migrate:
-    go tool goose -dir db/migrations postgres "$DATABASE_URL" up
+    go tool goose -dir db/migrations postgres "$DB_URL" up
 
 [group('db')]
 db-migrate-down:
-    go tool goose -dir db/migrations postgres "$DATABASE_URL" down
+    go tool goose -dir db/migrations postgres "$DB_URL" down
 
 [group('db')]
 db-status:
-    go tool goose -dir db/migrations postgres "$DATABASE_URL" status
+    go tool goose -dir db/migrations postgres "$DB_URL" status
 
 [group('db')]
 [confirm("This will destroy all data. Continue?")]
 db-reset:
-    go tool goose -dir db/migrations postgres "$DATABASE_URL" down-to 0
-    go tool goose -dir db/migrations postgres "$DATABASE_URL" up
+    go tool goose -dir db/migrations postgres "$DB_URL" down-to 0
+    go tool goose -dir db/migrations postgres "$DB_URL" up
 ```
 
 ## Conditional: Assets download recipe (when ANY of `htmx`, `alpine`, or `tailwind` is enabled)
@@ -210,7 +210,8 @@ Adjust the setup recipe:
 - The `default` recipe runs `just --list`, showing all recipes organized by group.
 - The `set dotenv-load` directive loads `.env` file automatically.
 - Recipes are organized into groups: `dev`, `quality`, `db`, `codegen`, `assets`, `docker`, `test`. Groups appear in `just --list` output for discoverability.
-- The `fmt` recipe formats code with `go fmt`, organizes imports with `goimports` (using the module path for local import grouping), and aligns struct fields with `betteralign`.
+- The `dev` recipe depends on `docker-up`, `generate`, and `css` — conditionally include only the dependencies that exist based on enabled subsystems. If none apply, `dev` has no dependencies.
+- The `fmt` recipe formats code with `go fmt`, organizes imports with `goimports` (using the module path for local import grouping), and aligns struct fields with `betteralign`. The `-` prefix on `betteralign -apply` suppresses exit code 3 (returned when changes are made).
 - The `lint` recipe runs a comprehensive linting pipeline matching the Forge framework's own standards: `go vet`, build check, `golangci-lint`, `nilaway`, `betteralign`, and `modernize`.
 - The `check` recipe runs `fmt`, `lint`, and `test` in sequence — use as a pre-commit gate.
 - The `test` recipe runs tests with race detection and coverage reporting.
@@ -219,7 +220,7 @@ Adjust the setup recipe:
 - The `generate` recipe runs all enabled code generators (sqlc, templ) in one command.
 - The `db-migration-create` recipe uses goose to create migration files in the `db/migrations/` directory. Usage: `just db-migration-create add_users_table`
 - The `db-generate` recipe runs sqlc to generate Go code from SQL queries into `internal/repository/`. Usage: `just db-generate`
-- The `db-migrate` recipe runs pending migrations against `$DATABASE_URL`. The `db-migrate-down` recipe rolls back the last migration. The `db-status` recipe shows current migration state. The `db-reset` recipe drops all tables and re-migrates (with confirmation prompt).
+- The `db-migrate` recipe runs pending migrations against `$DB_URL`. The `db-migrate-down` recipe rolls back the last migration. The `db-status` recipe shows current migration state. The `db-reset` recipe drops all tables and re-migrates (with confirmation prompt).
 - `{{MODULE_PATH}}` in the `fmt` recipe must be replaced with the actual Go module path during generation.
 - `{{SERVICES_LIST}}` in the `test-integration` recipe must be replaced with the space-separated list of Docker service names for the enabled subsystems (e.g., `postgres redis storage mailpit`).
 - Recipe indentation uses 4 spaces per the `.editorconfig` setting.

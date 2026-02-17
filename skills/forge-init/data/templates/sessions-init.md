@@ -98,9 +98,9 @@ DELETE FROM sessions WHERE user_id = $1 AND id != $2;
 -- name: DeleteOldestSessionByUserID :exec
 DELETE FROM sessions
 WHERE id = (
-    SELECT id FROM sessions
-    WHERE user_id = $1
-    ORDER BY last_active_at ASC
+    SELECT s.id FROM sessions s
+    WHERE s.user_id = $1
+    ORDER BY s.last_active_at ASC
     LIMIT 1
 );
 
@@ -211,7 +211,7 @@ func (s *Store) ListByUserID(ctx context.Context, userID string) ([]*forge.Sessi
 
 	sessions := make([]*forge.Session, 0, len(rows))
 	for _, row := range rows {
-		sess, err := listRowToSession(row)
+		sess, err := rowToSession(row)
 		if err != nil {
 			return nil, err
 		}
@@ -276,31 +276,6 @@ func rowToSession(row repository.Session) (*forge.Session, error) {
 	}, nil
 }
 
-func listRowToSession(row repository.ListSessionsByUserIDRow) (*forge.Session, error) {
-	var data map[string]any
-	if len(row.Data) > 0 {
-		if err := json.Unmarshal(row.Data, &data); err != nil {
-			return nil, err
-		}
-	}
-	if data == nil {
-		data = make(map[string]any)
-	}
-
-	return &forge.Session{
-		ID:           row.ID,
-		TokenHash:    row.TokenHash,
-		UserID:       row.UserID,
-		Data:         data,
-		IP:           row.Ip,
-		UserAgent:    row.UserAgent,
-		Device:       row.Device,
-		Fingerprint:  row.Fingerprint,
-		CreatedAt:    row.CreatedAt,
-		LastActiveAt: row.LastActiveAt,
-		ExpiresAt:    row.ExpiresAt,
-	}, nil
-}
 ```
 
 ### Adapter Notes
@@ -309,6 +284,6 @@ func listRowToSession(row repository.ListSessionsByUserIDRow) (*forge.Session, e
 - `Data` field: `forge.Session` uses `map[string]any`, stored as `JSONB`. The adapter marshals/unmarshals via `json.RawMessage`.
 - `UserID` is `*string` in `forge.Session` — maps to nullable `TEXT` in PostgreSQL. sqlc generates this as `*string`.
 - `pgx.ErrNoRows` is mapped to `forge.ErrSessionNotFound` in `GetByTokenHash`.
-- The `ListByUserID` query returns a separate row type (`ListSessionsByUserIDRow`), so a dedicated conversion function is used.
+- The `ListByUserID` query selects all columns, so sqlc returns `[]Session` directly — reuse `rowToSession` for conversion.
 - All methods that take `userID` as a parameter pass `&userID` because sqlc generates nullable columns as `*string`.
 - The `Ip` field name (lowercase) comes from sqlc's default column name mapping of the `ip` column.
