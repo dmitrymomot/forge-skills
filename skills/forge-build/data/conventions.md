@@ -97,13 +97,16 @@ import (
 
 ---
 
-## Modern Go (1.25+)
+## Modern Go (1.26+)
 
 - Use `for range n` instead of `for i := 0; i < n; i++`
 - Use `min()`/`max()` builtins
 - Use `slices.Contains()` instead of manual loops
 - Use `clear()` for maps/slices
 - No `v := v` in loop captures (Go 1.22+ fixed loop variables)
+- Use `errors.AsType[T](err)` instead of `var target T; errors.As(err, &target)` — cleaner generic error unwrapping
+- Use `reflect.Value.Fields()` iterator instead of `for i := range rv.NumField()`
+- Use `slog.NewMultiHandler()` instead of custom multi-handler implementations
 
 ---
 

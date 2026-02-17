@@ -277,4 +277,4 @@ List each file path with `(created)` or `(modified)` label.
 - **Build**: `go build -o /dev/null ./...` — never leave binaries
 - **Edit, don't overwrite**: When adding to existing files, use `Edit` to append/insert
 - **Session safety**: Extract `c.UserID()` etc. before goroutines — NOT goroutine-safe
-- **Modern Go**: `for range n`, `min()`/`max()`, `slices.Contains()`, no `v := v`
+- **Modern Go**: `for range n`, `min()`/`max()`, `slices.Contains()`, `errors.AsType[T]()`, no `v := v`

@@ -66,11 +66,13 @@ func (h *MyHandler) list(c forge.Context) error {
 - No reflection, no service containers, no magic
 - Packages receive values via parameters, not context
 - All IDs via `pkg/id/` — never `uuid.New()` or `ulid.Make()`
-- Modern Go 1.25+: `for range n`, `min()`/`max()`, `clear()`, `slices.Contains()`
+- Modern Go 1.26+: `for range n`, `min()`/`max()`, `clear()`, `slices.Contains()`, `errors.AsType[T]()`, `reflect.Value.Fields()`
 - Validator/sanitizer tags use semicolons as separators, colons for params
 - `go build -o /dev/null ./...` — never leave binary artifacts
 - `requestContext` session methods are NOT goroutine-safe
 - `recover()` returns `*runtime.PanicNilError` in Go 1.21+
+- Prefer `errors.AsType[T](err)` over `var target T; errors.As(err, &target)` — cleaner generic error unwrapping
+- Use `slog.NewMultiHandler()` instead of custom multi-handler implementations
 - No `v := v` captures (Go 1.22+ loop variables)
 
 ## Skills Structure
