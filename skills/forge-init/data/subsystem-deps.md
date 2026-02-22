@@ -15,6 +15,7 @@
 | TailwindCSS  | tailwind     | —        | —         | CSS build tool, CLI-compiled               |
 | Mailer       | mailer       | —        | —         | SMTP-based (Mailpit in dev)        |
 | OAuth        | oauth        | —        | —         | Sessions strongly recommended      |
+| i18n         | i18n         | —        | —         | Embedded JSON translations         |
 
 ## Resolution Rules
 
@@ -41,3 +42,4 @@
 | mailer     | `smtp.Config`            | `SMTP_`           |
 | oauth      | `oauth.GoogleConfig`     | `GOOGLE_OAUTH_`   |
 | oauth      | `oauth.GitHubConfig`     | `GITHUB_OAUTH_`   |
+| i18n       | `i18n.Config`            | `I18N_`            |

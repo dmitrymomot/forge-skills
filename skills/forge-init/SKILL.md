@@ -41,7 +41,7 @@ Ask the user the following using `AskUserQuestion`:
 3. **Subsystems** — Multi-select from:
    - A. PostgreSQL, B. Redis, C. Sessions, D. Jobs, E. Storage
    - F. templ, G. HTMX, H. Alpine.js, I. TailwindCSS
-   - J. Email, K. OAuth, L. None
+   - J. Email, K. OAuth, L. i18n, M. None
 
 After Q3, read `skills/forge-init/data/subsystem-deps.md` and resolve dependencies:
 
@@ -65,6 +65,7 @@ Key rules:
 - When ANY frontend option (htmx, alpine, tailwind) is selected, create `assets/embed.go` per `templates/assets-embed.md` and the shared `assets/{src,static/{css,js,img}}` tree — only once
 - When `tailwind` is selected, CSS source files will be created in `assets/src/` during Phase 4
 - When `mailer` is selected, create `templates/emails/` and `templates/emails/layouts/` directories (email template files are generated in Phase 4)
+- When `i18n` is selected, create `i18n/translations/en/` and generate `i18n/translations/embed.go` and `i18n/translations/en/app.json` per `templates/i18n-init.md`
 
 ---
 
@@ -87,6 +88,7 @@ Compose `cmd/config.go` by inserting subsystem imports and config fields into th
 | storage   | `storage.Config`     | `"github.com/dmitrymomot/forge/pkg/storage"`        |
 | mailer    | `mailer.Config` + `smtp.Config` | `"github.com/dmitrymomot/forge/pkg/mailer"` + `"github.com/dmitrymomot/forge/pkg/mailer/smtp"` |
 | oauth     | `oauth.GoogleConfig` + `oauth.GitHubConfig` | `"github.com/dmitrymomot/forge/pkg/oauth"` |
+| i18n      | `i18n.Config`          | `"github.com/dmitrymomot/forge/pkg/i18n"` |
 
 Remove placeholder comments from the final output.
 
@@ -122,12 +124,21 @@ When `db` is selected, add:
 
 No `"embed"` import or `//go:embed` directive in main.go — the embed lives in `db/migrations/embed.go`.
 
+### i18n Embed Concern
+
+When `i18n` is selected, add:
+
+1. Import `i18ntranslations "{{MODULE_PATH}}/i18n/translations"` in main.go
+2. Use `i18ntranslations.FS` in init code: `i18n.WithJSONDir(i18ntranslations.FS)`
+
+No `"embed"` import or `//go:embed` directive in main.go — the embed lives in `i18n/translations/embed.go`.
+
 ### Assembly
 
 Compose `cmd/main.go` by:
 
 1. Merging all imports (deduplicate) — embed-based imports are regular package imports, no `"embed"` needed
-2. Placing init code in dependency order (db first, then redis, storage, mailer, oauth)
+2. Placing init code in dependency order (db first, then redis, storage, mailer, oauth, i18n)
 3. Assembling health checks, app options, and shutdown hooks
 4. Replacing `{{APP_NAME}}` with the actual app name
 5. Removing unused placeholder comments and only including `ctx := context.Background()` if subsystem init code uses ctx
@@ -160,7 +171,7 @@ Read each template file and generate the corresponding project file:
 - If `mailer` is selected, read the Generated Files section from `skills/forge-init/data/subsystems/mailer.md` and create `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html`. Replace `{{APP_NAME}}` with the actual app name. Preserve Go template syntax (`{{.Content}}`, `{{.Metadata.Subject}}`, `{{.Name}}`, etc.) verbatim — only replace `{{APP_NAME}}` and `{{MODULE_PATH}}` scaffold placeholders.
 - Read `skills/forge-init/data/templates/claude-md.md` → write `CLAUDE.md` at the project root. Assemble dynamic sections (subsystem list, project structure, commands) based on enabled subsystems. Replace `{{APP_NAME}}` and `{{MODULE_PATH}}`.
 
-**Note:** DB init files (`db/migrations/embed.go`, `00001_init.sql`, `db/sqlc.yml`) are already generated in Phase 1 — do not regenerate them here.
+**Note:** DB init files (`db/migrations/embed.go`, `00001_init.sql`, `db/sqlc.yml`) and i18n init files (`i18n/translations/embed.go`, `i18n/translations/en/app.json`) are already generated in Phase 1 — do not regenerate them here.
 
 ---
 
@@ -292,6 +303,7 @@ Display a summary to the user:
     - Generate repository code with `just db-generate` after adding SQL queries (if db enabled)
     - Customize email templates in `templates/emails/` (if mailer enabled)
     - Set up OAuth credentials (if oauth enabled)
+    - Add translations in `i18n/translations/` — use `c.T("key")` in handlers (if i18n enabled)
     - Health checks available at `/_live` and `/_ready`
 
 If `templ` is enabled, add to next steps:

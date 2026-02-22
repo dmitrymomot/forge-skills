@@ -88,6 +88,7 @@ Insert one bullet per enabled subsystem into the `<!-- SUBSYSTEM_BULLETS -->` pl
 | tailwind | - **TailwindCSS** — Utility CSS framework. CLI-compiled CSS in `assets/static/css/`. Source configs in `assets/src/` |
 | mailer | - **Email** — SMTP mailer (Mailpit in dev). Templates in `templates/emails/`, layouts in `templates/emails/layouts/`. Config: `mailer.Config` + `smtp.Config` |
 | oauth | - **OAuth** — Google and GitHub providers. Config: `oauth.GoogleConfig` + `oauth.GitHubConfig` |
+| i18n | - **i18n** — Internationalization with embedded JSON translations. `c.T("key")`, `c.Tn("key", n)`. Translations in `i18n/translations/{lang}/`. Config: `i18n.Config` |
 
 If no subsystems are enabled, replace the placeholder with: `No optional subsystems enabled.`
 

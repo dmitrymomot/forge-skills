@@ -45,9 +45,10 @@ Default suggestion: derive from app name by lowercasing and replacing spaces/spe
 - I. **TailwindCSS** — Utility-first CSS framework (CLI build)
 - J. **Email** (SMTP / Mailpit) — Transactional email with template rendering
 - K. **OAuth** (Google/GitHub) — Social login providers
-- L. **None** — Minimal app with health checks only
+- L. **i18n** — Internationalization with embedded JSON translations
+- M. **None** — Minimal app with health checks only
 
-If the user selects `L`, no subsystems are enabled.
+If the user selects `M`, no subsystems are enabled.
 
 ---
 

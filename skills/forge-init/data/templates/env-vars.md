@@ -69,6 +69,7 @@ Append sections in this order, with a blank line and comment header between each
 5. Storage (`# Storage`)
 6. Mailer (`# Email`)
 7. OAuth (`# OAuth`)
+8. i18n (`# i18n`)
 
 Sessions env vars are already covered by the base Cookie section. When sessions is enabled, the cookie values are already present in the base section.
 

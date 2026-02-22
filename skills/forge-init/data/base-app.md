@@ -52,6 +52,7 @@ Subsystem config types are imported from their actual packages, not from the `fo
 | storage   | `"github.com/dmitrymomot/forge/pkg/storage"`     | `storage.Config`         |
 | mailer    | `"github.com/dmitrymomot/forge/pkg/mailer"` + `"github.com/dmitrymomot/forge/pkg/mailer/smtp"` | `mailer.Config` + `smtp.Config` |
 | oauth     | `"github.com/dmitrymomot/forge/pkg/oauth"`       | `oauth.GoogleConfig` + `oauth.GitHubConfig` |
+| i18n      | `"github.com/dmitrymomot/forge/pkg/i18n"`        | `i18n.Config`              |
 
 Base config types (`forge.AppConfig`, `forge.RunConfig`) remain in the `forge` package. Cookie config uses `cookie.Config` from `"github.com/dmitrymomot/forge/pkg/cookie"`. Middleware config types (`middlewares.CORSConfig`) remain in the `middlewares` package.
 
@@ -220,8 +221,8 @@ func main() {
 
 1. Collect all sections from each enabled subsystem's data file
 2. Merge imports (deduplicate) — include config type imports per the Import Injection table above
-3. Place config fields in order: db, redis, jobs, storage, mailer, oauth
-4. Place init code in dependency order: db first (needed by jobs), redis, storage, mailer, oauth
+3. Place config fields in order: db, redis, jobs, storage, mailer, oauth, i18n
+4. Place init code in dependency order: db first (needed by jobs), redis, storage, mailer, oauth, i18n
 5. Health checks and shutdown hooks follow the same order
 6. Assemble embed-based imports via dedicated packages (no inline `//go:embed` directives in main.go):
    - **DB**: If `db` is enabled, add `dbmigrations "{{MODULE_PATH}}/db/migrations"` to main.go imports. Use `dbmigrations.FS` in init code. No `"embed"` import needed.
