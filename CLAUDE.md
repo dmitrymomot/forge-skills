@@ -124,10 +124,21 @@ permissionMode: plan # Optional: requires plan approval before acting
 4. Code-generating skills must verify compilation with `go build -o /dev/null`
 5. Skills that use third-party APIs must verify them with `go doc` first — never guess
 
+## Issue Workflow
+
+Standard flow for working on GitHub issues:
+
+1. `gh issue list --state open` — review open issues
+2. Pick an issue to work on
+3. Plan the fix, present to user for approval
+4. Implement and commit with `Closes #N` in the commit message body
+5. `git push` to close the issue automatically on GitHub
+
 ## Editing Gotchas
 
 - `skills/forge-init/data/base-app.md` has near-identical single-domain and multi-domain templates — include the `## main.go —` heading in edit context to avoid duplicate matches
 - Plugin version lives in `.claude-plugin/marketplace.json` — appears twice (metadata + plugin), bump both with `replace_all`
+- Adding a new generated file to `forge-init` requires 4 updates: (1) template in `data/templates/`, (2) generation step in `SKILL.md` Phase 4, (3) row in `data/directory-structure.md` conditional table, (4) example tree in `data/templates/claude-md.md`
 
 ## Relationship to Global Skills
 
