@@ -36,6 +36,7 @@
 | `internal/sessionstore/`       | sessions                         | PostgreSQL session store adapter     |
 | `templates/emails/`            | mailer                           | Email templates                      |
 | `templates/emails/layouts/`    | mailer                           | Email HTML layouts                   |
+| `postgres-language-server.jsonc` | db                             | PostgreSQL language server linter config |
 
 ## DB Directory Structure (when `db` is selected)
 

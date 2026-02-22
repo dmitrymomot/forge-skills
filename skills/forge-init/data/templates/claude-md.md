@@ -123,6 +123,7 @@ Replace `<!-- PROJECT_STRUCTURE -->` with a directory tree matching the actual g
 ├── CLAUDE.md
 ├── justfile
 ├── docker-compose.yml
+├── postgres-language-server.jsonc
 ├── go.mod
 └── go.sum
 ```

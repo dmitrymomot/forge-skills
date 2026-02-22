@@ -156,6 +156,7 @@ Read each template file and generate the corresponding project file:
 - Read `skills/forge-init/data/templates/docker-compose-test.md` → write `docker-compose.test.yml` **only if** any enabled subsystem has Docker services (db, redis, storage) or mailer is enabled. Include only the service snippets for enabled subsystems. This file uses tmpfs mounts for fast ephemeral test infrastructure.
 - Read `skills/forge-init/data/templates/gitignore.md` → write `.gitignore`
 - Read `skills/forge-init/data/templates/editorconfig.md` → write `.editorconfig`
+- If `db` is selected, read `skills/forge-init/data/templates/postgres-language-server.md` → write `postgres-language-server.jsonc`
 - If `mailer` is selected, read the Generated Files section from `skills/forge-init/data/subsystems/mailer.md` and create `templates/emails/embed.go`, `templates/emails/welcome.md`, and `templates/emails/layouts/base.html`. Replace `{{APP_NAME}}` with the actual app name. Preserve Go template syntax (`{{.Content}}`, `{{.Metadata.Subject}}`, `{{.Name}}`, etc.) verbatim — only replace `{{APP_NAME}}` and `{{MODULE_PATH}}` scaffold placeholders.
 - Read `skills/forge-init/data/templates/claude-md.md` → write `CLAUDE.md` at the project root. Assemble dynamic sections (subsystem list, project structure, commands) based on enabled subsystems. Replace `{{APP_NAME}}` and `{{MODULE_PATH}}`.
 
