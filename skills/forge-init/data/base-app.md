@@ -93,6 +93,9 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/dmitrymomot/forge"
 	"github.com/dmitrymomot/forge/middlewares"
@@ -105,7 +108,8 @@ func main() {
 		log.Fatal("failed to load config: ", err)
 	}
 
-	ctx := context.Background() // Include only if subsystem init code uses ctx
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
 
 	// {{SUBSYSTEM_INIT}}
 
@@ -127,6 +131,7 @@ func main() {
 	// app.Register(&handler.MyHandler{})
 
 	if err := app.Run(cfg.Run,
+		forge.WithContext(ctx),
 		// {{SUBSYSTEM_SHUTDOWN_HOOKS}}
 	); err != nil {
 		log.Fatal(err)
@@ -145,6 +150,9 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/dmitrymomot/forge"
 	"github.com/dmitrymomot/forge/middlewares"
@@ -158,7 +166,8 @@ func main() {
 		log.Fatal("failed to load config: ", err)
 	}
 
-	ctx := context.Background() // Include only if subsystem init code uses ctx
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
 
 	// {{SUBSYSTEM_INIT}}
 
@@ -182,6 +191,7 @@ func main() {
 	// app.Register(&handler.MyHandler{})
 
 	if err := forge.Run(cfg.Run,
+		forge.WithContext(ctx),
 		forge.WithRunLogger(l),
 		forge.WithFallback(app),
 		// {{SUBSYSTEM_SHUTDOWN_HOOKS}}
@@ -217,5 +227,5 @@ func main() {
    - **DB**: If `db` is enabled, add `dbmigrations "{{MODULE_PATH}}/db/migrations"` to main.go imports. Use `dbmigrations.FS` in init code. No `"embed"` import needed.
    - **Frontend**: If ANY frontend option (`htmx`, `alpine`, `tailwind`) is enabled, add `"{{MODULE_PATH}}/assets"` to main.go imports. Use `forge.WithStaticFiles("/static/", assets.StaticFS, "static")` in app options. No `"embed"` import needed.
    - These import-based embeds replace the previous `{{EMBED_DIRECTIVES}}` placeholder pattern. The `//go:embed` directives live in their respective packages (`db/migrations/embed.go` and `assets/embed.go`), not in `cmd/main.go`.
-7. Only include `ctx := context.Background()` if any subsystem init code uses `ctx`
+7. The signal context (`signal.NotifyContext`) is always included — it's needed for graceful shutdown regardless of subsystems
 8. Remove trailing commas and empty comment blocks if no subsystems are enabled
